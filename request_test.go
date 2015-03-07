@@ -337,6 +337,26 @@ func TestRequestPOSTForm(t *testing.T) {
 	}
 }
 
+func TestRequestFail(t *testing.T) {
+	client := New()
+
+	body, res, err := client.Request(&Option{
+		Url: "http://1.com",
+	})
+
+	if err == nil {
+		t.Fail()
+	}
+
+	if res != nil {
+		t.Fail()
+	}
+
+	if body != "" {
+		t.Fail()
+	}
+}
+
 ////// helper
 
 type httpbinRes struct {

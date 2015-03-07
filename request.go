@@ -73,6 +73,11 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 
 	res, err = c.httpClient.Do(req)
 
+	if err != nil {
+		debug("#Request ERR(http) %v", err)
+		return
+	}
+
 	defer res.Body.Close()
 
 	resBody, err := ioutil.ReadAll(res.Body)
