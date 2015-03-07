@@ -6,8 +6,8 @@
 [travis-img]: https://img.shields.io/travis/ddo/request.svg?style=flat-square
 [travis-url]: https://travis-ci.org/ddo/request
 
-[godoc-img]: https://godoc.org/github.com/ddo/request?status.png
-[godoc-url]: http://godoc.org/github.com/ddo/request
+[godoc-img]: https://img.shields.io/badge/godoc-Reference-brightgreen.svg?style=flat-square
+[godoc-url]: https://godoc.org/github.com/ddo/request
 
 ##GET
 
