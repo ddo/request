@@ -94,7 +94,7 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 }
 
 func makeUrl(urlStr string, query *Query) (u *url.URL, err error) {
-	debug("#makeUrl")
+	// debug("#makeUrl")
 
 	u, err = url.Parse(urlStr)
 
@@ -120,7 +120,7 @@ func makeUrl(urlStr string, query *Query) (u *url.URL, err error) {
 }
 
 func makeBody(form *Form) (body string, err error) {
-	debug("#makeBody")
+	// debug("#makeBody")
 
 	if form == nil {
 		return
@@ -139,7 +139,7 @@ func makeBody(form *Form) (body string, err error) {
 }
 
 func makeHeader(req *http.Request, header *Header) {
-	debug("#makeHeader")
+	// debug("#makeHeader")
 
 	//default User-Agent
 	req.Header.Set("User-Agent", "github.com/ddo/request")
