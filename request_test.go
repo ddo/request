@@ -14,7 +14,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestMakeUrl(t *testing.T) {
-	u, err := makeUrl("https://httpbin.org/get?one=1", &Query{
+	u, err := makeUrl("https://httpbin.org/get?one=1", &Data{
 		"two":   []string{"2", "hai"},
 		"three": []string{"3", "ba", "trois"},
 		"email": []string{"ddo@ddo.me"},
@@ -42,7 +42,7 @@ func TestMakeUrlNil(t *testing.T) {
 }
 
 func TestMakeBody(t *testing.T) {
-	body, err := makeBody(&Body{
+	body, err := makeBody(&Data{
 		"one":   []string{"1", "mot"},
 		"two":   []string{"2", "hai"},
 		"three": []string{"3", "ba", "trois"},
@@ -177,7 +177,7 @@ func TestRequestGET(t *testing.T) {
 
 	body, res, err := client.Request(&Option{
 		Url: "https://httpbin.org/get?one=1",
-		Query: &Query{
+		Query: &Data{
 			"two":   []string{"2", "hai"},
 			"three": []string{"3", "ba", "trois"},
 			"email": []string{"ddo@ddo.me"},
@@ -238,10 +238,10 @@ func TestRequestPOST(t *testing.T) {
 	body, res, err := client.Request(&Option{
 		Url:    "https://httpbin.org/post",
 		Method: "POST",
-		Query: &Query{
+		Query: &Data{
 			"one": []string{"1"},
 		},
-		Body: &Body{
+		Body: &Data{
 			"two":   []string{"2", "hai"},
 			"three": []string{"3", "ba", "trois"},
 			"email": []string{"ddo@ddo.me"},
@@ -277,10 +277,10 @@ func TestRequestPOSTForm(t *testing.T) {
 	body, res, err := client.Request(&Option{
 		Url:    "https://httpbin.org/post",
 		Method: "post",
-		Query: &Query{
+		Query: &Data{
 			"one": []string{"1"},
 		},
-		Body: &Body{
+		Body: &Data{
 			"two":   []string{"2", "hai"},
 			"three": []string{"3", "ba", "trois"},
 			"email": []string{"ddo@ddo.me"},
