@@ -36,7 +36,7 @@ type Header map[string]string
 
 type Option struct {
 	Url     string //required
-	Method  string //default: "GET"
+	Method  string //default: "GET", anything "POST", "PUT", "DELETE" or "PATCH"
 	BodyStr string
 	Body    *Data
 	Form    *Data       //set Content-Type header as "application/x-www-form-urlencoded"

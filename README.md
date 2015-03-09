@@ -10,7 +10,7 @@
 ##Options
 
 * Url     ``string`` required
-* Method  ``string`` default: "GET"
+* Method  ``string`` default: "GET", anything "POST", "PUT", "DELETE" or "PATCH"
 * BodyStr ``string``
 * Body    ``*Data``
 * Form    ``*Data``       set Content-Type header as "application/x-www-form-urlencoded"
@@ -18,7 +18,7 @@
 * Query   ``*Data``
 * Header  ``*Header``
 
-##GET
+###GET
 
 ```go
 client := request.New()
@@ -35,7 +35,7 @@ fmt.Println(res)
 fmt.Println(body)
 ```
 
-##POST
+###POST
 
 ```go
 body, res, err := client.Request(&request.Option{
@@ -49,7 +49,7 @@ body, res, err := client.Request(&request.Option{
 })
 ```
 
-##POST form
+###POST form
 
 ```go
 body, res, err := client.Request(&request.Option{
@@ -63,7 +63,7 @@ body, res, err := client.Request(&request.Option{
 })
 ```
 
-##Json
+###Json
 
 ```go
 body, res, err := client.Request(&request.Option{
@@ -75,6 +75,26 @@ body, res, err := client.Request(&request.Option{
         "email": []string{"ddo@ddo.me"},
     },
 })
+```
+
+##Logger
+
+to enable log set environment variable as
+
+```go
+DEBUG=request
+```
+
+or
+
+```shell
+DEBUG=request go run file.go
+```
+
+##Test
+
+```shell
+go test -v
 ```
 
 ##TODO
