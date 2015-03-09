@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	// "fmt"
 	"net/http"
 	"strings"
 	"testing"
@@ -81,6 +82,47 @@ func TestMakeBodyForm(t *testing.T) {
 	}
 }
 
+func TestMakeBodyJson(t *testing.T) {
+	body := makeBody(&Option{
+		Json: map[string]interface{}{
+			"int":    1,
+			"string": "two",
+			"array":  []string{"3", "ba", "trois"},
+			"object": map[string]interface{}{
+				"int": 4,
+			},
+		},
+	})
+
+	if body != `{"array":["3","ba","trois"],"int":1,"object":{"int":4},"string":"two"}` {
+		t.Fail()
+	}
+}
+
+func TestMakeHeader(t *testing.T) {
+	req, _ := http.NewRequest("GET", "https://httpbin.org", strings.NewReader(""))
+
+	makeHeader(req, &Option{
+		Header: &Header{
+			"Custom":     "Custom header",
+			"Custom2":    " ",
+			"User-Agent": "",
+		},
+	})
+
+	if req.Header["User-Agent"][0] != "" {
+		t.Fail()
+	}
+
+	if req.Header["Custom"][0] != "Custom header" {
+		t.Fail()
+	}
+
+	if req.Header["Custom2"][0] != " " {
+		t.Fail()
+	}
+}
+
 func TestMakeHeaderDefault(t *testing.T) {
 	req, _ := http.NewRequest("POST", "https://httpbin.org", strings.NewReader(""))
 
@@ -107,26 +149,18 @@ func TestMakeHeaderForm(t *testing.T) {
 	}
 }
 
-func TestMakeHeader(t *testing.T) {
-	req, _ := http.NewRequest("GET", "https://httpbin.org", strings.NewReader(""))
+func TestMakeHeaderJson(t *testing.T) {
+	req, _ := http.NewRequest("POST", "https://httpbin.org", strings.NewReader(""))
 
 	makeHeader(req, &Option{
-		Header: &Header{
-			"Custom":     "Custom header",
-			"Custom2":    " ",
-			"User-Agent": "",
-		},
+		Json: &Data{},
 	})
 
-	if req.Header["User-Agent"][0] != "" {
+	if req.Header["User-Agent"][0] != "github.com/ddo/request" {
 		t.Fail()
 	}
 
-	if req.Header["Custom"][0] != "Custom header" {
-		t.Fail()
-	}
-
-	if req.Header["Custom2"][0] != " " {
+	if req.Header["Content-Type"][0] != "application/json" {
 		t.Fail()
 	}
 }
@@ -319,6 +353,64 @@ func TestRequestPOST(t *testing.T) {
 	}
 }
 
+func TestRequestPOSTJson(t *testing.T) {
+	client := New()
+
+	body, res, err := client.Request(&Option{
+		Url:    "https://httpbin.org/post",
+		Method: "POST",
+		Query: &Data{
+			"one": []string{"1"},
+		},
+		Json: map[string]interface{}{
+			"int":    1,
+			"string": "two",
+			"array":  []string{"3", "ba", "trois"},
+			"object": map[string]interface{}{
+				"int": 4,
+			},
+		},
+	})
+
+	if err != nil || res == nil || body == "" {
+		t.Fail()
+	}
+
+	data := decodeHttpbinRes(body)
+
+	if data.Args["one"].(string) != "1" {
+		t.Fail()
+	}
+
+	if data.Data != `{"array":["3","ba","trois"],"int":1,"object":{"int":4},"string":"two"}` {
+		t.Fail()
+	}
+
+	if data.Json.Int != 1 {
+		t.Fail()
+	}
+
+	if data.Json.String != "two" {
+		t.Fail()
+	}
+
+	if data.Json.Array[0] != "3" {
+		t.Fail()
+	}
+
+	if data.Json.Array[1] != "ba" {
+		t.Fail()
+	}
+
+	if data.Json.Array[2] != "trois" {
+		t.Fail()
+	}
+
+	if data.Json.Object["int"] != 4 {
+		t.Fail()
+	}
+}
+
 func TestRequestPOSTForm(t *testing.T) {
 	client := New()
 
@@ -396,11 +488,19 @@ func TestRequestFail(t *testing.T) {
 
 ////// helper
 
+type httpbinResJson struct {
+	Int    int            `json:int`
+	String string         `json:string`
+	Array  []string       `json:array`
+	Object map[string]int `json:object`
+}
+
 type httpbinRes struct {
 	Args    map[string]interface{} `json:args`
 	Headers map[string]string      `json:headers`
 	Data    string                 `json:data`
 	Form    map[string]interface{} `json:form`
+	Json    httpbinResJson         `json:json`
 }
 
 func decodeHttpbinRes(body string) *httpbinRes {

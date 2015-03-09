@@ -1,6 +1,7 @@
 package request
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
@@ -39,6 +40,7 @@ type Option struct {
 	BodyStr string
 	Body    *Data
 	Form    *Data
+	Json    interface{}
 	Query   *Data
 	Header  *Header
 }
@@ -129,6 +131,13 @@ func makeBody(opt *Option) (body string) {
 		body = opt.BodyStr
 		return
 
+	case opt.Json != nil:
+		//TODO: expose err
+		jsonStr, _ := json.Marshal(opt.Json)
+
+		body = string(jsonStr)
+		return
+
 	case opt.Form != nil:
 		data = opt.Form
 
@@ -156,9 +165,11 @@ func makeHeader(req *http.Request, opt *Option) {
 	req.Header.Set("User-Agent", "github.com/ddo/request")
 
 	switch {
-	//set Content-Type header if form
 	case opt.Form != nil:
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	case opt.Json != nil:
+		req.Header.Set("Content-Type", "application/json")
 	}
 
 	if opt.Header == nil {
