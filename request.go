@@ -61,7 +61,7 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 	}
 
 	//body
-	reqBody, err := makeBody(opt.Body)
+	reqBody := makeBody(opt)
 
 	req, err := http.NewRequest(opt.Method, reqUrl.String(), strings.NewReader(reqBody))
 
@@ -121,22 +121,33 @@ func makeUrl(urlStr string, query *Data) (u *url.URL, err error) {
 	return
 }
 
-func makeBody(form *Data) (body string) {
-	// debug("#makeBody")
+func makeBody(opt *Option) (body string) {
+	var data *Data
 
-	if form == nil {
+	switch {
+	case opt.BodyStr != "":
+		body = opt.BodyStr
+		return
+
+	case opt.Form != nil:
+		data = opt.Form
+
+	case opt.Body != nil:
+		data = opt.Body
+
+	default:
 		return
 	}
 
-	data := url.Values{}
+	values := url.Values{}
 
-	for key, slice := range *form {
+	for key, slice := range *data {
 		for _, value := range slice {
-			data.Add(key, value)
+			values.Add(key, value)
 		}
 	}
 
-	body = data.Encode()
+	body = values.Encode()
 	return
 }
 

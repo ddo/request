@@ -42,11 +42,13 @@ func TestMakeUrlNil(t *testing.T) {
 }
 
 func TestMakeBody(t *testing.T) {
-	body := makeBody(&Data{
-		"one":   []string{"1", "mot"},
-		"two":   []string{"2", "hai"},
-		"three": []string{"3", "ba", "trois"},
-		"email": []string{"ddo@ddo.me"},
+	body := makeBody(&Option{
+		Body: &Data{
+			"one":   []string{"1", "mot"},
+			"two":   []string{"2", "hai"},
+			"three": []string{"3", "ba", "trois"},
+			"email": []string{"ddo@ddo.me"},
+		},
 	})
 
 	if body != "email=ddo%40ddo.me&one=1&one=mot&three=3&three=ba&three=trois&two=2&two=hai" {
@@ -55,9 +57,24 @@ func TestMakeBody(t *testing.T) {
 }
 
 func TestMakeBodyNil(t *testing.T) {
-	body := makeBody(nil)
+	body := makeBody(&Option{})
 
 	if body != "" {
+		t.Fail()
+	}
+}
+
+func TestMakeBodyForm(t *testing.T) {
+	body := makeBody(&Option{
+		Form: &Data{
+			"one":   []string{"1", "mot"},
+			"two":   []string{"2", "hai"},
+			"three": []string{"3", "ba", "trois"},
+			"email": []string{"ddo@ddo.me"},
+		},
+	})
+
+	if body != "email=ddo%40ddo.me&one=1&one=mot&three=3&three=ba&three=trois&two=2&two=hai" {
 		t.Fail()
 	}
 }
@@ -272,13 +289,10 @@ func TestRequestPOSTForm(t *testing.T) {
 		Query: &Data{
 			"one": []string{"1"},
 		},
-		Body: &Data{
+		Form: &Data{
 			"two":   []string{"2", "hai"},
 			"three": []string{"3", "ba", "trois"},
 			"email": []string{"ddo@ddo.me"},
-		},
-		Header: &Header{
-			"Content-Type": "application/x-www-form-urlencoded",
 		},
 	})
 
