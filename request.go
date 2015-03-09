@@ -71,7 +71,7 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 	}
 
 	//header
-	makeHeader(req, opt.Header)
+	makeHeader(req, opt)
 
 	res, err = c.httpClient.Do(req)
 
@@ -151,17 +151,21 @@ func makeBody(opt *Option) (body string) {
 	return
 }
 
-func makeHeader(req *http.Request, header *Header) {
-	// debug("#makeHeader")
-
+func makeHeader(req *http.Request, opt *Option) {
 	//default User-Agent
 	req.Header.Set("User-Agent", "github.com/ddo/request")
 
-	if header == nil {
+	switch {
+	//set Content-Type header if form
+	case opt.Form != nil:
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	}
+
+	if opt.Header == nil {
 		return
 	}
 
-	for key, value := range *header {
+	for key, value := range *opt.Header {
 		req.Header.Set(key, value)
 	}
 }
