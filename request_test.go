@@ -42,16 +42,12 @@ func TestMakeUrlNil(t *testing.T) {
 }
 
 func TestMakeBody(t *testing.T) {
-	body, err := makeBody(&Data{
+	body := makeBody(&Data{
 		"one":   []string{"1", "mot"},
 		"two":   []string{"2", "hai"},
 		"three": []string{"3", "ba", "trois"},
 		"email": []string{"ddo@ddo.me"},
 	})
-
-	if err != nil {
-		t.Fail()
-	}
 
 	if body != "email=ddo%40ddo.me&one=1&one=mot&three=3&three=ba&three=trois&two=2&two=hai" {
 		t.Fail()
@@ -59,11 +55,7 @@ func TestMakeBody(t *testing.T) {
 }
 
 func TestMakeBodyNil(t *testing.T) {
-	body, err := makeBody(nil)
-
-	if err != nil {
-		t.Fail()
-	}
+	body := makeBody(nil)
 
 	if body != "" {
 		t.Fail()

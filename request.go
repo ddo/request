@@ -121,7 +121,7 @@ func makeUrl(urlStr string, query *Data) (u *url.URL, err error) {
 	return
 }
 
-func makeBody(form *Data) (body string, err error) {
+func makeBody(form *Data) (body string) {
 	// debug("#makeBody")
 
 	if form == nil {
