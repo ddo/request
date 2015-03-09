@@ -2,6 +2,8 @@ package request
 
 import (
 	"encoding/json"
+	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -75,6 +77,56 @@ func TestMakeBodyForm(t *testing.T) {
 	})
 
 	if body != "email=ddo%40ddo.me&one=1&one=mot&three=3&three=ba&three=trois&two=2&two=hai" {
+		t.Fail()
+	}
+}
+
+func TestMakeHeaderDefault(t *testing.T) {
+	req, _ := http.NewRequest("POST", "https://httpbin.org", strings.NewReader(""))
+
+	makeHeader(req, &Option{})
+
+	if req.Header["User-Agent"][0] != "github.com/ddo/request" {
+		t.Fail()
+	}
+}
+
+func TestMakeHeaderForm(t *testing.T) {
+	req, _ := http.NewRequest("POST", "https://httpbin.org", strings.NewReader(""))
+
+	makeHeader(req, &Option{
+		Form: &Data{},
+	})
+
+	if req.Header["User-Agent"][0] != "github.com/ddo/request" {
+		t.Fail()
+	}
+
+	if req.Header["Content-Type"][0] != "application/x-www-form-urlencoded" {
+		t.Fail()
+	}
+}
+
+func TestMakeHeader(t *testing.T) {
+	req, _ := http.NewRequest("GET", "https://httpbin.org", strings.NewReader(""))
+
+	makeHeader(req, &Option{
+		Header: &Header{
+			"Custom":     "Custom header",
+			"Custom2":    " ",
+			"User-Agent": "",
+		},
+	})
+
+	if req.Header["User-Agent"][0] != "" {
+		t.Fail()
+	}
+
+	if req.Header["Custom"][0] != "Custom header" {
+		t.Fail()
+	}
+
+	if req.Header["Custom2"][0] != " " {
 		t.Fail()
 	}
 }
