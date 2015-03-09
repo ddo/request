@@ -63,7 +63,11 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 	}
 
 	//body
-	reqBody := makeBody(opt)
+	reqBody, err := makeBody(opt)
+
+	if err != nil {
+		return
+	}
 
 	req, err := http.NewRequest(opt.Method, reqUrl.String(), strings.NewReader(reqBody))
 
@@ -123,7 +127,7 @@ func makeUrl(urlStr string, query *Data) (u *url.URL, err error) {
 	return
 }
 
-func makeBody(opt *Option) (body string) {
+func makeBody(opt *Option) (body string, err error) {
 	var data *Data
 
 	switch {
@@ -132,11 +136,15 @@ func makeBody(opt *Option) (body string) {
 		return
 
 	case opt.Json != nil:
-		//TODO: expose err
-		jsonStr, _ := json.Marshal(opt.Json)
+		jsonStr, err := json.Marshal(opt.Json)
+
+		if err != nil {
+			debug("#makeBody ERR: %v", err)
+			return body, err
+		}
 
 		body = string(jsonStr)
-		return
+		return body, err
 
 	case opt.Form != nil:
 		data = opt.Form

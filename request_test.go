@@ -45,7 +45,7 @@ func TestMakeUrlNil(t *testing.T) {
 }
 
 func TestMakeBody(t *testing.T) {
-	body := makeBody(&Option{
+	body, err := makeBody(&Option{
 		Body: &Data{
 			"one":   []string{"1", "mot"},
 			"two":   []string{"2", "hai"},
@@ -54,13 +54,21 @@ func TestMakeBody(t *testing.T) {
 		},
 	})
 
+	if err != nil {
+		t.Fail()
+	}
+
 	if body != "email=ddo%40ddo.me&one=1&one=mot&three=3&three=ba&three=trois&two=2&two=hai" {
 		t.Fail()
 	}
 }
 
 func TestMakeBodyNil(t *testing.T) {
-	body := makeBody(&Option{})
+	body, err := makeBody(&Option{})
+
+	if err != nil {
+		t.Fail()
+	}
 
 	if body != "" {
 		t.Fail()
@@ -68,7 +76,7 @@ func TestMakeBodyNil(t *testing.T) {
 }
 
 func TestMakeBodyForm(t *testing.T) {
-	body := makeBody(&Option{
+	body, err := makeBody(&Option{
 		Form: &Data{
 			"one":   []string{"1", "mot"},
 			"two":   []string{"2", "hai"},
@@ -77,13 +85,17 @@ func TestMakeBodyForm(t *testing.T) {
 		},
 	})
 
+	if err != nil {
+		t.Fail()
+	}
+
 	if body != "email=ddo%40ddo.me&one=1&one=mot&three=3&three=ba&three=trois&two=2&two=hai" {
 		t.Fail()
 	}
 }
 
 func TestMakeBodyJson(t *testing.T) {
-	body := makeBody(&Option{
+	body, err := makeBody(&Option{
 		Json: map[string]interface{}{
 			"int":    1,
 			"string": "two",
@@ -93,6 +105,10 @@ func TestMakeBodyJson(t *testing.T) {
 			},
 		},
 	})
+
+	if err != nil {
+		t.Fail()
+	}
 
 	if body != `{"array":["3","ba","trois"],"int":1,"object":{"int":4},"string":"two"}` {
 		t.Fail()
