@@ -276,7 +276,7 @@ func TestRequestPOSTForm(t *testing.T) {
 
 	body, res, err := client.Request(&Option{
 		Url:    "https://httpbin.org/post",
-		Method: "POST",
+		Method: "post",
 		Query: &Query{
 			"one": []string{"1"},
 		},

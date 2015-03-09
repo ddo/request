@@ -53,6 +53,8 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 		opt.Method = "GET"
 	}
 
+	opt.Method = strings.ToUpper(opt.Method)
+
 	//url
 	reqUrl, err := makeUrl(opt.Url, opt.Query)
 
