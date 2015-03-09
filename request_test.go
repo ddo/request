@@ -293,6 +293,41 @@ func TestRequestGET(t *testing.T) {
 	}
 }
 
+func TestRequestPOSTStr(t *testing.T) {
+	client := New()
+
+	body, res, err := client.Request(&Option{
+		Url:    "https://httpbin.org/post",
+		Method: "POST",
+		Query: &Data{
+			"one": []string{"1"},
+		},
+		BodyStr: "email=ddo%40ddo.me&three=3&three=ba&three=trois&two=2&two=hai",
+	})
+
+	if err != nil {
+		t.Fail()
+	}
+
+	if res == nil {
+		t.Fail()
+	}
+
+	if body == "" {
+		t.Fail()
+	}
+
+	data := decodeHttpbinRes(body)
+
+	if data.Args["one"].(string) != "1" {
+		t.Fail()
+	}
+
+	if data.Data != "email=ddo%40ddo.me&three=3&three=ba&three=trois&two=2&two=hai" {
+		t.Fail()
+	}
+}
+
 func TestRequestPOST(t *testing.T) {
 	client := New()
 
