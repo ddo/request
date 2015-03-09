@@ -31,16 +31,18 @@ func New() *Client {
 }
 
 type Query map[string][]string
+type Body map[string][]string
 type Form map[string][]string
 type Header map[string]string
 
 type Option struct {
-	Url    string
-	Method string
-	Body   string
-	Query  *Query
-	Form   *Form
-	Header *Header
+	Url     string
+	Method  string
+	BodyStr string
+	Body    *Body
+	Form    *Form
+	Query   *Query
+	Header  *Header
 }
 
 func (c *Client) Request(opt *Option) (body string, res *http.Response, err error) {
@@ -59,7 +61,7 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 	}
 
 	//body
-	reqBody, err := makeBody(opt.Form)
+	reqBody, err := makeBody(opt.Body)
 
 	req, err := http.NewRequest(opt.Method, reqUrl.String(), strings.NewReader(reqBody))
 
@@ -119,7 +121,7 @@ func makeUrl(urlStr string, query *Query) (u *url.URL, err error) {
 	return
 }
 
-func makeBody(form *Form) (body string, err error) {
+func makeBody(form *Body) (body string, err error) {
 	// debug("#makeBody")
 
 	if form == nil {

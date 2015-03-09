@@ -42,7 +42,7 @@ func TestMakeUrlNil(t *testing.T) {
 }
 
 func TestMakeBody(t *testing.T) {
-	body, err := makeBody(&Form{
+	body, err := makeBody(&Body{
 		"one":   []string{"1", "mot"},
 		"two":   []string{"2", "hai"},
 		"three": []string{"3", "ba", "trois"},
@@ -241,7 +241,7 @@ func TestRequestPOST(t *testing.T) {
 		Query: &Query{
 			"one": []string{"1"},
 		},
-		Form: &Form{
+		Body: &Body{
 			"two":   []string{"2", "hai"},
 			"three": []string{"3", "ba", "trois"},
 			"email": []string{"ddo@ddo.me"},
@@ -280,7 +280,7 @@ func TestRequestPOSTForm(t *testing.T) {
 		Query: &Query{
 			"one": []string{"1"},
 		},
-		Form: &Form{
+		Body: &Body{
 			"two":   []string{"2", "hai"},
 			"three": []string{"3", "ba", "trois"},
 			"email": []string{"ddo@ddo.me"},
