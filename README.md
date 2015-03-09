@@ -1,13 +1,22 @@
-# request [![Build Status][travis-img]][travis-url]
+# request [![Build Status][travis-img]][travis-url] [![Doc][godoc-img]][godoc-url]
 > Simplified HTTP request client in go
-
-[![Doc][godoc-img]][godoc-url]
 
 [travis-img]: https://img.shields.io/travis/ddo/request.svg?style=flat-square
 [travis-url]: https://travis-ci.org/ddo/request
 
 [godoc-img]: https://img.shields.io/badge/godoc-Reference-brightgreen.svg?style=flat-square
 [godoc-url]: https://godoc.org/github.com/ddo/request
+
+##Options
+
+* Url     ``string`` required
+* Method  ``string`` default: "GET"
+* BodyStr ``string``
+* Body    ``*Data``
+* Form    ``*Data``       set Content-Type header as "application/x-www-form-urlencoded"
+* Json    ``interface{}`` set Content-Type header as "application/json"
+* Query   ``*Data``
+* Header  ``*Header``
 
 ##GET
 
@@ -29,12 +38,10 @@ fmt.Println(body)
 ##POST
 
 ```go
-client := request.New()
-
 body, res, err := client.Request(&request.Option{
     Url:    "https://httpbin.org/post",
     Method: "POST",
-    Form: &request.Form{
+    Body: &request.Data{
         "two":   []string{"2", "hai"},
         "three": []string{"3", "ba", "trois"},
         "email": []string{"ddo@ddo.me"},
@@ -45,18 +52,33 @@ body, res, err := client.Request(&request.Option{
 ##POST form
 
 ```go
-client := request.New()
-
 body, res, err := client.Request(&request.Option{
     Url:    "https://httpbin.org/post",
     Method: "POST",
-    Form: &request.Form{
+    Form: &request.Data{
         "two":   []string{"2", "hai"},
         "three": []string{"3", "ba", "trois"},
         "email": []string{"ddo@ddo.me"},
     },
-    Header: &request.Header{
-        "Content-Type": "application/x-www-form-urlencoded",
+})
+```
+
+##Json
+
+```go
+body, res, err := client.Request(&request.Option{
+    Url:    "https://httpbin.org/post",
+    Method: "POST",
+    Form: &request.Data{
+        "two":   []string{"2", "hai"},
+        "three": []string{"3", "ba", "trois"},
+        "email": []string{"ddo@ddo.me"},
     },
 })
 ```
+
+##TODO
+
+* default settings
+* hooks
+* file

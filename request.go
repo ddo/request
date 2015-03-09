@@ -35,12 +35,12 @@ type Data map[string][]string
 type Header map[string]string
 
 type Option struct {
-	Url     string
-	Method  string
+	Url     string //required
+	Method  string //default: "GET"
 	BodyStr string
 	Body    *Data
-	Form    *Data
-	Json    interface{}
+	Form    *Data       //set Content-Type header as "application/x-www-form-urlencoded"
+	Json    interface{} //set Content-Type header as "application/json"
 	Query   *Data
 	Header  *Header
 }
