@@ -138,15 +138,7 @@ func TestRequest(t *testing.T) {
 		Url: "https://httpbin.org/ip",
 	})
 
-	if err != nil {
-		t.Fail()
-	}
-
-	if res == nil {
-		t.Fail()
-	}
-
-	if body == "" {
+	if err != nil || res == nil || body == "" {
 		t.Fail()
 	}
 }
@@ -178,15 +170,7 @@ func TestRequestDefaultUserAgent(t *testing.T) {
 		Url: "https://httpbin.org/get",
 	})
 
-	if err != nil {
-		t.Fail()
-	}
-
-	if res == nil {
-		t.Fail()
-	}
-
-	if body == "" {
+	if err != nil || res == nil || body == "" {
 		t.Fail()
 	}
 
@@ -210,15 +194,7 @@ func TestRequestHeader(t *testing.T) {
 		},
 	})
 
-	if err != nil {
-		t.Fail()
-	}
-
-	if res == nil {
-		t.Fail()
-	}
-
-	if body == "" {
+	if err != nil || res == nil || body == "" {
 		t.Fail()
 	}
 
@@ -245,15 +221,7 @@ func TestRequestGET(t *testing.T) {
 		},
 	})
 
-	if err != nil {
-		t.Fail()
-	}
-
-	if res == nil {
-		t.Fail()
-	}
-
-	if body == "" {
+	if err != nil || res == nil || body == "" {
 		t.Fail()
 	}
 
@@ -305,15 +273,7 @@ func TestRequestPOSTStr(t *testing.T) {
 		BodyStr: "email=ddo%40ddo.me&three=3&three=ba&three=trois&two=2&two=hai",
 	})
 
-	if err != nil {
-		t.Fail()
-	}
-
-	if res == nil {
-		t.Fail()
-	}
-
-	if body == "" {
+	if err != nil || res == nil || body == "" {
 		t.Fail()
 	}
 
@@ -344,15 +304,7 @@ func TestRequestPOST(t *testing.T) {
 		},
 	})
 
-	if err != nil {
-		t.Fail()
-	}
-
-	if res == nil {
-		t.Fail()
-	}
-
-	if body == "" {
+	if err != nil || res == nil || body == "" {
 		t.Fail()
 	}
 
@@ -383,15 +335,7 @@ func TestRequestPOSTForm(t *testing.T) {
 		},
 	})
 
-	if err != nil {
-		t.Fail()
-	}
-
-	if res == nil {
-		t.Fail()
-	}
-
-	if body == "" {
+	if err != nil || res == nil || body == "" {
 		t.Fail()
 	}
 
