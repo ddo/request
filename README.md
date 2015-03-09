@@ -69,10 +69,13 @@ body, res, err := client.Request(&request.Option{
 body, res, err := client.Request(&request.Option{
     Url:    "https://httpbin.org/post",
     Method: "POST",
-    Form: &request.Data{
-        "two":   []string{"2", "hai"},
-        "three": []string{"3", "ba", "trois"},
-        "email": []string{"ddo@ddo.me"},
+    Json: map[string]interface{}{
+        "int":    1,
+        "string": "two",
+        "array":  []string{"3", "ba", "trois"},
+        "object": map[string]interface{}{
+            "int": 4,
+        },
     },
 })
 ```
