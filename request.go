@@ -22,7 +22,7 @@ func New() *Client {
 	var cookie, _ = cookiejar.New(nil)
 
 	client := &http.Client{
-		Timeout: time.Second * 30,
+		Timeout: time.Second * 180,
 		Jar:     cookie,
 	}
 
@@ -170,7 +170,8 @@ func makeBody(opt *Option) (body string, err error) {
 
 func makeHeader(req *http.Request, opt *Option) {
 	//default User-Agent
-	req.Header.Set("User-Agent", "github.com/ddo/request")
+	// req.Header.Set("User-Agent", "github.com/ddo/request")
+	req.Header.Set("User-Agent", " ")
 
 	switch {
 	case opt.Form != nil:
