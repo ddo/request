@@ -2,7 +2,9 @@ package request
 
 import (
 	"encoding/json"
-	// "fmt"
+	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
@@ -10,6 +12,7 @@ import (
 
 const (
 	DEFAULT_HEADER = " "
+	STREAM_LENGTH  = 50
 )
 
 var c = New()
@@ -188,11 +191,11 @@ func TestMakeHeaderJson(t *testing.T) {
 func TestRequest(t *testing.T) {
 	client := New()
 
-	body, res, err := client.Request(&Option{
+	res, err := client.Request(&Option{
 		Url: "https://httpbin.org/ip",
 	})
 
-	if err != nil || res == nil || body == "" {
+	if err != nil || res == nil {
 		t.Fail()
 	}
 }
@@ -200,7 +203,7 @@ func TestRequest(t *testing.T) {
 func TestRequestRes(t *testing.T) {
 	client := New()
 
-	_, res, err := client.Request(&Option{
+	res, err := client.Request(&Option{
 		Url: "https://httpbin.org/status/500",
 	})
 
@@ -220,15 +223,15 @@ func TestRequestRes(t *testing.T) {
 func TestRequestDefaultUserAgent(t *testing.T) {
 	client := New()
 
-	body, res, err := client.Request(&Option{
+	res, err := client.Request(&Option{
 		Url: "https://httpbin.org/get",
 	})
 
-	if err != nil || res == nil || body == "" {
+	if err != nil || res == nil {
 		t.Fail()
 	}
 
-	data := decodeHttpbinRes(body)
+	data := decodeHttpbinRes(res)
 
 	userAgent := data.Headers["User-Agent"]
 
@@ -240,7 +243,7 @@ func TestRequestDefaultUserAgent(t *testing.T) {
 func TestRequestHeader(t *testing.T) {
 	client := New()
 
-	body, res, err := client.Request(&Option{
+	res, err := client.Request(&Option{
 		Url: "https://httpbin.org/get",
 		Header: &Header{
 			"Custom":     "Custom header",
@@ -248,11 +251,11 @@ func TestRequestHeader(t *testing.T) {
 		},
 	})
 
-	if err != nil || res == nil || body == "" {
+	if err != nil || res == nil {
 		t.Fail()
 	}
 
-	data := decodeHttpbinRes(body)
+	data := decodeHttpbinRes(res)
 
 	if data.Headers["User-Agent"] != "" {
 		t.Fail()
@@ -266,7 +269,7 @@ func TestRequestHeader(t *testing.T) {
 func TestRequestGET(t *testing.T) {
 	client := New()
 
-	body, res, err := client.Request(&Option{
+	res, err := client.Request(&Option{
 		Url: "https://httpbin.org/get?one=1",
 		Query: &Data{
 			"two":   []string{"2", "hai"},
@@ -275,11 +278,11 @@ func TestRequestGET(t *testing.T) {
 		},
 	})
 
-	if err != nil || res == nil || body == "" {
+	if err != nil || res == nil {
 		t.Fail()
 	}
 
-	data := decodeHttpbinRes(body)
+	data := decodeHttpbinRes(res)
 
 	email := data.Args["email"].(string)
 	one := data.Args["one"].(string)
@@ -318,7 +321,7 @@ func TestRequestGET(t *testing.T) {
 func TestRequestPOSTStr(t *testing.T) {
 	client := New()
 
-	body, res, err := client.Request(&Option{
+	res, err := client.Request(&Option{
 		Url:    "https://httpbin.org/post",
 		Method: "POST",
 		Query: &Data{
@@ -327,11 +330,11 @@ func TestRequestPOSTStr(t *testing.T) {
 		BodyStr: "email=ddo%40ddo.me&three=3&three=ba&three=trois&two=2&two=hai",
 	})
 
-	if err != nil || res == nil || body == "" {
+	if err != nil || res == nil {
 		t.Fail()
 	}
 
-	data := decodeHttpbinRes(body)
+	data := decodeHttpbinRes(res)
 
 	if data.Args["one"].(string) != "1" {
 		t.Fail()
@@ -345,7 +348,7 @@ func TestRequestPOSTStr(t *testing.T) {
 func TestRequestPOST(t *testing.T) {
 	client := New()
 
-	body, res, err := client.Request(&Option{
+	res, err := client.Request(&Option{
 		Url:    "https://httpbin.org/post",
 		Method: "POST",
 		Query: &Data{
@@ -358,11 +361,11 @@ func TestRequestPOST(t *testing.T) {
 		},
 	})
 
-	if err != nil || res == nil || body == "" {
+	if err != nil || res == nil {
 		t.Fail()
 	}
 
-	data := decodeHttpbinRes(body)
+	data := decodeHttpbinRes(res)
 
 	if data.Args["one"].(string) != "1" {
 		t.Fail()
@@ -376,7 +379,7 @@ func TestRequestPOST(t *testing.T) {
 func TestRequestPOSTJson(t *testing.T) {
 	client := New()
 
-	body, res, err := client.Request(&Option{
+	res, err := client.Request(&Option{
 		Url:    "https://httpbin.org/post",
 		Method: "POST",
 		Query: &Data{
@@ -392,11 +395,11 @@ func TestRequestPOSTJson(t *testing.T) {
 		},
 	})
 
-	if err != nil || res == nil || body == "" {
+	if err != nil || res == nil {
 		t.Fail()
 	}
 
-	data := decodeHttpbinRes(body)
+	data := decodeHttpbinRes(res)
 
 	if data.Args["one"].(string) != "1" {
 		t.Fail()
@@ -434,7 +437,7 @@ func TestRequestPOSTJson(t *testing.T) {
 func TestRequestPOSTForm(t *testing.T) {
 	client := New()
 
-	body, res, err := client.Request(&Option{
+	res, err := client.Request(&Option{
 		Url:    "https://httpbin.org/post",
 		Method: "post",
 		Query: &Data{
@@ -447,11 +450,11 @@ func TestRequestPOSTForm(t *testing.T) {
 		},
 	})
 
-	if err != nil || res == nil || body == "" {
+	if err != nil || res == nil {
 		t.Fail()
 	}
 
-	data := decodeHttpbinRes(body)
+	data := decodeHttpbinRes(res)
 
 	if data.Args["one"].(string) != "1" {
 		t.Fail()
@@ -489,7 +492,7 @@ func TestRequestPOSTForm(t *testing.T) {
 func TestRequestFail(t *testing.T) {
 	client := New()
 
-	body, res, err := client.Request(&Option{
+	res, err := client.Request(&Option{
 		Url: "http://1.com",
 	})
 
@@ -500,8 +503,48 @@ func TestRequestFail(t *testing.T) {
 	if res != nil {
 		t.Fail()
 	}
+}
 
-	if body != "" {
+func TestRequestStream(t *testing.T) {
+	client := New()
+
+	res, err := client.Request(&Option{
+		Url: fmt.Sprintf("https://httpbin.org/stream/%v", STREAM_LENGTH),
+	})
+
+	if err != nil {
+		t.Fail()
+	}
+
+	if res == nil {
+		t.Fail()
+	}
+
+	// process stream
+	counter := 0
+
+	defer res.Body.Close()
+
+	var data httpbinRes
+	decoder := json.NewDecoder(res.Body)
+
+	for {
+		err := decoder.Decode(&data)
+
+		if err == io.EOF {
+			break
+		}
+
+		// ignore the error
+		if err != nil {
+			panic(err)
+			break
+		}
+
+		counter++
+	}
+
+	if counter != STREAM_LENGTH {
 		t.Fail()
 	}
 }
@@ -523,8 +566,18 @@ type httpbinRes struct {
 	Json    httpbinResJson         `json:json`
 }
 
-func decodeHttpbinRes(body string) *httpbinRes {
+func decodeHttpbinRes(res *http.Response) *httpbinRes {
+	defer res.Body.Close()
 	var data httpbinRes
-	json.Unmarshal([]byte(body), &data)
+
+	resBody, err := ioutil.ReadAll(res.Body)
+
+	// ignore the error
+	if err != nil {
+		panic(err)
+	}
+
+	json.Unmarshal(resBody, &data)
+
 	return &data
 }

@@ -2,7 +2,6 @@ package request
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -27,7 +26,6 @@ func New() *Client {
 	}
 
 	debug("#New")
-
 	return &Client{client}
 }
 
@@ -45,7 +43,7 @@ type Option struct {
 	Header  *Header
 }
 
-func (c *Client) Request(opt *Option) (body string, res *http.Response, err error) {
+func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	debug("#Request")
 
 	//set GET as default method
@@ -86,24 +84,11 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 		return
 	}
 
-	defer res.Body.Close()
-
-	resBody, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		debug("#Request ERR(ioutil)", err)
-		return
-	}
-
-	body = string(resBody)
-
 	debug("#Request", res.Status)
 	return
 }
 
 func makeUrl(urlStr string, query *Data) (u *url.URL, err error) {
-	// debug("#makeUrl")
-
 	u, err = url.Parse(urlStr)
 
 	if err != nil {
