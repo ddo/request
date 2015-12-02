@@ -171,7 +171,7 @@ func makeBody(opt *Option) (body string, err error) {
 func makeHeader(req *http.Request, opt *Option) {
 	//default User-Agent
 	// req.Header.Set("User-Agent", "github.com/ddo/request")
-	req.Header.Set("User-Agent", " ")
+	req.Header.Set("User-Agent", " ") // == "" on the host side
 
 	switch {
 	case opt.Form != nil:

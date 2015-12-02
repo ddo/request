@@ -8,6 +8,10 @@ import (
 	"testing"
 )
 
+const (
+	DEFAULT_HEADER = " "
+)
+
 var c = New()
 
 func TestNew(t *testing.T) {
@@ -144,7 +148,7 @@ func TestMakeHeaderDefault(t *testing.T) {
 
 	makeHeader(req, &Option{})
 
-	if req.Header["User-Agent"][0] != "github.com/ddo/request" {
+	if req.Header["User-Agent"][0] != DEFAULT_HEADER {
 		t.Fail()
 	}
 }
@@ -156,7 +160,7 @@ func TestMakeHeaderForm(t *testing.T) {
 		Form: &Data{},
 	})
 
-	if req.Header["User-Agent"][0] != "github.com/ddo/request" {
+	if req.Header["User-Agent"][0] != DEFAULT_HEADER {
 		t.Fail()
 	}
 
@@ -172,7 +176,7 @@ func TestMakeHeaderJson(t *testing.T) {
 		Json: &Data{},
 	})
 
-	if req.Header["User-Agent"][0] != "github.com/ddo/request" {
+	if req.Header["User-Agent"][0] != DEFAULT_HEADER {
 		t.Fail()
 	}
 
@@ -228,7 +232,7 @@ func TestRequestDefaultUserAgent(t *testing.T) {
 
 	userAgent := data.Headers["User-Agent"]
 
-	if userAgent != "github.com/ddo/request" {
+	if userAgent != "" {
 		t.Fail()
 	}
 }
