@@ -189,3 +189,28 @@ func makeHeader(req *http.Request, opt *Option) {
 		req.Header.Set(key, value)
 	}
 }
+
+func (c *Client) GetCookie(domain, name string) (value string, err error) {
+	debug("#GetCookie", domain, name)
+
+	u, err := url.Parse(domain)
+
+	if err != nil {
+		debug("#GetCookie ERR(parse)", err)
+		return
+	}
+
+	cookies := c.httpClient.Jar.Cookies(u)
+
+	for i := 0; i < len(cookies); i++ {
+		if cookies[i].Name == name {
+			value = cookies[i].Value
+
+			debug("#GetCookie DONE", value)
+			return
+		}
+	}
+
+	debug("#GetCookie EMPTY")
+	return
+}
