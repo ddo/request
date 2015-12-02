@@ -1,4 +1,4 @@
-# request [![Build Status][travis-img]][travis-url] [![Doc][godoc-img]][godoc-url]
+# request [![Build Status][semaphoreci-img]][semaphoreci-url] [![Build Status][travis-img]][travis-url] [![Doc][godoc-img]][godoc-url]
 > Simplified HTTP request client in go
 
 [travis-img]: https://img.shields.io/travis/ddo/request.svg?style=flat-square
@@ -6,6 +6,9 @@
 
 [godoc-img]: https://img.shields.io/badge/godoc-Reference-brightgreen.svg?style=flat-square
 [godoc-url]: https://godoc.org/github.com/ddo/request
+
+[semaphoreci-img]: https://semaphoreci.com/api/v1/projects/fe48ba6a-f987-4018-b778-34c0fef12c87/620801/badge.svg
+[semaphoreci-url]: https://semaphoreci.com/ddo/request
 
 ##Options
 
