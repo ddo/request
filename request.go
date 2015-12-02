@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	. "github.com/tj/go-debug"
+	"github.com/ddo/go-dlog"
 )
 
-var debug = Debug("request")
+var debug = dlog.New("request")
 
 type Client struct {
 	httpClient *http.Client
@@ -72,7 +72,7 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 	req, err := http.NewRequest(opt.Method, reqUrl.String(), strings.NewReader(reqBody))
 
 	if err != nil {
-		debug("#Request ERR(req) %v", err)
+		debug("#Request ERR(req)", err)
 		return
 	}
 
@@ -82,7 +82,7 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 	res, err = c.httpClient.Do(req)
 
 	if err != nil {
-		debug("#Request ERR(http) %v", err)
+		debug("#Request ERR(http)", err)
 		return
 	}
 
@@ -91,13 +91,13 @@ func (c *Client) Request(opt *Option) (body string, res *http.Response, err erro
 	resBody, err := ioutil.ReadAll(res.Body)
 
 	if err != nil {
-		debug("#Request ERR(ioutil) %v", err)
+		debug("#Request ERR(ioutil)", err)
 		return
 	}
 
 	body = string(resBody)
 
-	debug("#Request %v", res.Status)
+	debug("#Request", res.Status)
 	return
 }
 
@@ -107,7 +107,7 @@ func makeUrl(urlStr string, query *Data) (u *url.URL, err error) {
 	u, err = url.Parse(urlStr)
 
 	if err != nil {
-		debug("#makeUrl ERR: %v", err)
+		debug("#makeUrl ERR:", err)
 		return
 	}
 
@@ -139,7 +139,7 @@ func makeBody(opt *Option) (body string, err error) {
 		jsonStr, err := json.Marshal(opt.Json)
 
 		if err != nil {
-			debug("#makeBody ERR: %v", err)
+			debug("#makeBody ERR:", err)
 			return body, err
 		}
 
