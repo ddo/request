@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ddo/go-dlog"
+	"gopkg.in/ddo/go-dlog.v1"
 )
 
-var debug = dlog.New("request")
+var debug = dlog.New("request", nil)
 
 type Client struct {
 	httpClient *http.Client
@@ -25,7 +25,7 @@ func New() *Client {
 		Jar:     cookie,
 	}
 
-	debug("#New")
+	debug("INIT")
 	return &Client{client}
 }
 
@@ -44,7 +44,7 @@ type Option struct {
 }
 
 func (c *Client) Request(opt *Option) (res *http.Response, err error) {
-	debug("#Request")
+	debug("START")
 
 	//set GET as default method
 	if opt.Method == "" {
@@ -70,7 +70,7 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	req, err := http.NewRequest(opt.Method, reqUrl.String(), strings.NewReader(reqBody))
 
 	if err != nil {
-		debug("#Request ERR(req)", err)
+		debug("ERR(req)", err)
 		return
 	}
 
@@ -80,11 +80,12 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	res, err = c.httpClient.Do(req)
 
 	if err != nil {
-		debug("#Request ERR(http)", err)
+		debug("ERR(http)", err)
 		return
 	}
 
-	debug("#Request", res.Status)
+	debug(res.Request.URL)
+	debug("DONE", res.Status)
 	return
 }
 
@@ -92,7 +93,7 @@ func makeUrl(urlStr string, query *Data) (u *url.URL, err error) {
 	u, err = url.Parse(urlStr)
 
 	if err != nil {
-		debug("#makeUrl ERR:", err)
+		debug("ERR:", err)
 		return
 	}
 
@@ -124,7 +125,7 @@ func makeBody(opt *Option) (body string, err error) {
 		jsonStr, err := json.Marshal(opt.Json)
 
 		if err != nil {
-			debug("#makeBody ERR:", err)
+			debug("ERR:", err)
 			return body, err
 		}
 
@@ -176,12 +177,12 @@ func makeHeader(req *http.Request, opt *Option) {
 }
 
 func (c *Client) GetCookie(domain, name string) (value string, err error) {
-	debug("#GetCookie", domain, name)
+	debug(domain, name)
 
 	u, err := url.Parse(domain)
 
 	if err != nil {
-		debug("#GetCookie ERR(parse)", err)
+		debug("ERR(parse)", err)
 		return
 	}
 
@@ -191,11 +192,11 @@ func (c *Client) GetCookie(domain, name string) (value string, err error) {
 		if cookies[i].Name == name {
 			value = cookies[i].Value
 
-			debug("#GetCookie DONE", value)
+			debug("DONE", value)
 			return
 		}
 	}
 
-	debug("#GetCookie EMPTY")
+	debug("EMPTY")
 	return
 }
