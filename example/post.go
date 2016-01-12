@@ -9,7 +9,7 @@ import (
 func main() {
 	client := request.New()
 
-	body, res, err := client.Request(&request.Option{
+	res, err := client.Request(&request.Option{
 		Url:    "https://httpbin.org/post",
 		Method: "POST",
 		Body: &request.Data{
@@ -23,6 +23,7 @@ func main() {
 		panic(err)
 	}
 
+	defer res.Body.Close()
+
 	fmt.Println(res)
-	fmt.Println(body)
 }

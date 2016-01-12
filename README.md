@@ -1,8 +1,5 @@
-# request [![Build Status][semaphoreci-img]][semaphoreci-url] [![Build Status][travis-img]][travis-url] [![Doc][godoc-img]][godoc-url]
+# request [![Build Status][semaphoreci-img]][semaphoreci-url] [![Doc][godoc-img]][godoc-url]
 > Simplified HTTP request client in go
-
-[travis-img]: https://img.shields.io/travis/ddo/request.svg?style=flat-square
-[travis-url]: https://travis-ci.org/ddo/request
 
 [godoc-img]: https://img.shields.io/badge/godoc-Reference-brightgreen.svg?style=flat-square
 [godoc-url]: https://godoc.org/github.com/ddo/request
@@ -10,7 +7,12 @@
 [semaphoreci-img]: https://semaphoreci.com/api/v1/projects/fe48ba6a-f987-4018-b778-34c0fef12c87/620801/badge.svg
 [semaphoreci-url]: https://semaphoreci.com/ddo/request
 
-##Options
+## installation
+```sh
+go get gopkg.in/ddo/request.v1
+```
+
+## option
 
 * Url     ``string`` required
 * Method  ``string`` default: "GET", anything "POST", "PUT", "DELETE" or "PATCH"
@@ -21,12 +23,12 @@
 * Query   ``*Data``
 * Header  ``*Header``
 
-###GET
+### GET
 
 ```go
 client := request.New()
 
-body, res, err := client.Request(&request.Option{
+res, err := client.Request(&request.Option{
     Url: "https://httpbin.org/get",
 })
 
@@ -34,14 +36,13 @@ if err != nil {
     panic(err)
 }
 
-fmt.Println(res)
-fmt.Println(body)
+defer res.Body.Close()
 ```
 
-###POST
+### POST
 
 ```go
-body, res, err := client.Request(&request.Option{
+res, err := client.Request(&request.Option{
     Url:    "https://httpbin.org/post",
     Method: "POST",
     Body: &request.Data{
@@ -52,10 +53,10 @@ body, res, err := client.Request(&request.Option{
 })
 ```
 
-###POST form
+### POST form
 
 ```go
-body, res, err := client.Request(&request.Option{
+res, err := client.Request(&request.Option{
     Url:    "https://httpbin.org/post",
     Method: "POST",
     Form: &request.Data{
@@ -66,10 +67,10 @@ body, res, err := client.Request(&request.Option{
 })
 ```
 
-###Json
+### Json
 
 ```go
-body, res, err := client.Request(&request.Option{
+res, err := client.Request(&request.Option{
     Url:    "https://httpbin.org/post",
     Method: "POST",
     Json: map[string]interface{}{
@@ -83,27 +84,27 @@ body, res, err := client.Request(&request.Option{
 })
 ```
 
-##Logger
+## logger
 
 to enable log set environment variable as
 
 ```go
-DEBUG=request
+DLOG=*
 ```
 
 or
 
 ```shell
-DEBUG=request go run file.go
+DEBUG=* go run file.go
 ```
 
-##Test
+## test
 
 ```shell
 go test -v
 ```
 
-##TODO
+## TODO
 
 * default settings
 * hooks
