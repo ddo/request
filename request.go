@@ -25,7 +25,16 @@ func New() *Client {
 		Jar:     cookie,
 	}
 
-	debug("INIT")
+	debug()
+	return &Client{client}
+}
+
+func NewNoCookie() *Client {
+	client := &http.Client{
+		Timeout: time.Second * 180,
+	}
+
+	debug()
 	return &Client{client}
 }
 
