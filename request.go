@@ -42,14 +42,15 @@ type Data map[string][]string
 type Header map[string]string
 
 type Option struct {
-	Url     string //required
-	Method  string //default: "GET", anything "POST", "PUT", "DELETE" or "PATCH"
-	BodyStr string
-	Body    *Data
-	Form    *Data       //set Content-Type header as "application/x-www-form-urlencoded"
-	Json    interface{} //set Content-Type header as "application/json"
-	Query   *Data
-	Header  *Header
+	Url      string //required
+	Method   string //default: "GET", anything "POST", "PUT", "DELETE" or "PATCH"
+	BodyStr  string
+	Body     *Data
+	Form     *Data       //set Content-Type header as "application/x-www-form-urlencoded"
+	Json     interface{} //set Content-Type header as "application/json"
+	Query    *Data
+	QueryRaw string
+	Header   *Header
 }
 
 func (c *Client) Request(opt *Option) (res *http.Response, err error) {
@@ -76,7 +77,7 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 		return
 	}
 
-	req, err := http.NewRequest(opt.Method, reqUrl.String(), strings.NewReader(reqBody))
+	req, err := http.NewRequest(opt.Method, reqUrl.String()+opt.QueryRaw, strings.NewReader(reqBody))
 
 	if err != nil {
 		debug("ERR(req)", err)
