@@ -15,10 +15,14 @@ const (
 	STREAM_LENGTH  = 50
 )
 
-var c = New()
+var tesing_client *Client
+
+func init() {
+	tesing_client = New()
+}
 
 func TestNew(t *testing.T) {
-	if c.httpClient == nil {
+	if tesing_client.httpClient == nil {
 		t.Fail()
 	}
 }
@@ -564,6 +568,7 @@ type httpbinRes struct {
 	Data    string                 `json:data`
 	Form    map[string]interface{} `json:form`
 	Json    httpbinResJson         `json:json`
+	Cookies map[string]string      `json:cookies`
 }
 
 func decodeHttpbinRes(res *http.Response) *httpbinRes {
