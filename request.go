@@ -11,6 +11,10 @@ import (
 	"gopkg.in/ddo/go-dlog.v1"
 )
 
+const (
+	DEFAULT_TIMEOUT = 180
+)
+
 var debug = dlog.New("request", nil)
 
 type Client struct {
@@ -21,7 +25,7 @@ func New() *Client {
 	var cookie, _ = cookiejar.New(nil)
 
 	client := &http.Client{
-		Timeout: time.Second * 180,
+		Timeout: time.Second * DEFAULT_TIMEOUT,
 		Jar:     cookie,
 	}
 
@@ -31,7 +35,7 @@ func New() *Client {
 
 func NewNoCookie() *Client {
 	client := &http.Client{
-		Timeout: time.Second * 180,
+		Timeout: time.Second * DEFAULT_TIMEOUT,
 	}
 
 	debug()
@@ -51,6 +55,12 @@ type Option struct {
 	Query    *Data
 	QueryRaw string
 	Header   *Header
+}
+
+func (c *Client) SetTimeout(timeout time.Duration) {
+	debug(timeout)
+
+	c.httpClient.Timeout = timeout
 }
 
 func (c *Client) Request(opt *Option) (res *http.Response, err error) {
