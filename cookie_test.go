@@ -1,6 +1,7 @@
 package request
 
 import (
+	"net/http"
 	"testing"
 )
 
@@ -73,15 +74,36 @@ func TestGetCookie(t *testing.T) {
 }
 
 func TestSetCookies(t *testing.T) {
-	cookies, _ := testing_cookieClient.GetCookies("http://httpbin.org")
+	// empty cookie slice
+	cookies := []*http.Cookie{}
 
-	for i := 0; i < len(cookies); i++ {
-		if cookies[i].Name == "cookie2" {
-			cookies[i].Value = "3"
-		}
+	// new cookie
+	newCookie := &http.Cookie{
+		Name:   "cookie3",
+		Value:  "ba",
+		MaxAge: 0,
+
+		// Name  string
+		// Value string
+
+		// Path       string    // optional
+		// Domain     string    // optional
+		// Expires    time.Time // optional
+		// RawExpires string    // for reading cookies only
+
+		// // MaxAge=0 means no 'Max-Age' attribute specified.
+		// // MaxAge<0 means delete cookie now, equivalently 'Max-Age: 0'
+		// // MaxAge>0 means Max-Age attribute present and given in seconds
+		// MaxAge   int
+		// Secure   bool
+		// HttpOnly bool
+		// Raw      string
+		// Unparsed []string
 	}
 
-	testing_cookieClient.SetCookies("http://httpbin.org", cookies)
+	cookies = append(cookies, newCookie)
+
+	testing_cookieClient.SetCookies("https://httpbin.org", cookies)
 
 	res, err := testing_cookieClient.Request(&Option{
 		Url: "http://httpbin.org/cookies",
@@ -97,7 +119,38 @@ func TestSetCookies(t *testing.T) {
 
 	data := decodeHttpbinRes(res)
 
-	if data.Cookies["cookie2"] != "3" {
+	if data.Cookies["cookie3"] != "ba" {
+		t.Error()
+	}
+}
+
+func TestSetCookiesModify(t *testing.T) {
+	cookies, _ := testing_cookieClient.GetCookies("http://httpbin.org")
+
+	// override the old one
+	for i := 0; i < len(cookies); i++ {
+		if cookies[i].Name == "cookie2" {
+			cookies[i].Value = "hai"
+		}
+	}
+
+	testing_cookieClient.SetCookies("http://httpbin.org", cookies)
+
+	res, err := testing_cookieClient.Request(&Option{
+		Url: "https://httpbin.org/cookies",
+	})
+
+	if err != nil {
+		t.Error()
+	}
+
+	if res == nil {
+		t.Error()
+	}
+
+	data := decodeHttpbinRes(res)
+
+	if data.Cookies["cookie2"] != "hai" {
 		t.Error()
 	}
 }

@@ -582,6 +582,8 @@ func decodeHttpbinRes(res *http.Response) *httpbinRes {
 		panic(err)
 	}
 
+	// debug(string(resBody))
+
 	json.Unmarshal(resBody, &data)
 
 	return &data
