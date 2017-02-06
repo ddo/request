@@ -72,45 +72,29 @@ func (c *Client) SetTimeout(timeout time.Duration) {
 	c.httpClient.Timeout = timeout
 }
 
-// SetProxy sets client proxy
-func (c *Client) SetProxy(proxyURLStr string) (err error) {
-	debug(proxyURLStr)
-
-	proxyURL, err := url.Parse(proxyURLStr)
-	if err != nil {
-		debug("ERR(url.Parse)", err)
-		return
-	}
-
-	c.httpClient.Transport = &http.Transport{Proxy: http.ProxyURL(proxyURL)}
-	return
-}
-
 // Request sends http request
 func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	//set GET as default method
 	if opt.Method == "" {
 		opt.Method = "GET"
 	}
+
 	opt.Method = strings.ToUpper(opt.Method)
 	debug(opt.Method)
 
 	//url
 	reqURL, err := makeURL(opt.Url, opt.Query)
-
 	if err != nil {
 		return
 	}
 
 	//body
 	reqBody, err := makeBody(opt)
-
 	if err != nil {
 		return
 	}
 
 	req, err := http.NewRequest(opt.Method, reqURL.String()+opt.QueryRaw, strings.NewReader(reqBody))
-
 	if err != nil {
 		debug("ERR(req)", err)
 		return
@@ -120,7 +104,6 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	makeHeader(req, opt)
 
 	res, err = c.httpClient.Do(req)
-
 	if err != nil {
 		debug("ERR(http)", err)
 		return
@@ -133,7 +116,6 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 
 func makeURL(urlStr string, query *Data) (u *url.URL, err error) {
 	u, err = url.Parse(urlStr)
-
 	if err != nil {
 		debug("ERR:", err)
 		return
@@ -165,7 +147,6 @@ func makeBody(opt *Option) (body string, err error) {
 
 	case opt.Json != nil:
 		jsonStr, err := json.Marshal(opt.Json)
-
 		if err != nil {
 			debug("ERR:", err)
 			return body, err

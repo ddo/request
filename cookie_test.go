@@ -13,63 +13,72 @@ func TestCookieInit(t *testing.T) {
 	res, err := testCookieClient.Request(&Option{
 		Url: "http://httpbin.org/cookies/set?cookie1=one&cookie2=2",
 	})
-
 	if err != nil {
 		t.Error()
+		return
 	}
 
 	if res == nil {
 		t.Error()
+		return
 	}
 
 	data := decodeHttpbinRes(res)
 
 	if data.Cookies["cookie1"] != "one" {
 		t.Error()
+		return
 	}
 
 	if data.Cookies["cookie2"] != "2" {
 		t.Error()
+		return
 	}
 }
 
 func TestGetCookies(t *testing.T) {
 	cookies, err := testCookieClient.GetCookies("http://httpbin.org")
-
 	if err != nil {
 		t.Error()
+		return
 	}
 
 	if len(cookies) != 2 {
 		t.Error()
+		return
 	}
 
 	if cookies[0].Name != "cookie1" {
 		t.Error()
+		return
 	}
 
 	if cookies[0].Value != "one" {
 		t.Error()
+		return
 	}
 
 	if cookies[1].Name != "cookie2" {
 		t.Error()
+		return
 	}
 
 	if cookies[1].Value != "2" {
 		t.Error()
+		return
 	}
 }
 
 func TestGetCookie(t *testing.T) {
 	cookie2, err := testCookieClient.GetCookie("http://httpbin.org", "cookie2")
-
 	if err != nil {
 		t.Error()
+		return
 	}
 
 	if cookie2 != "2" {
 		t.Error()
+		return
 	}
 }
 
@@ -82,23 +91,6 @@ func TestSetCookies(t *testing.T) {
 		Name:   "cookie3",
 		Value:  "ba",
 		MaxAge: 0,
-
-		// Name  string
-		// Value string
-
-		// Path       string    // optional
-		// Domain     string    // optional
-		// Expires    time.Time // optional
-		// RawExpires string    // for reading cookies only
-
-		// // MaxAge=0 means no 'Max-Age' attribute specified.
-		// // MaxAge<0 means delete cookie now, equivalently 'Max-Age: 0'
-		// // MaxAge>0 means Max-Age attribute present and given in seconds
-		// MaxAge   int
-		// Secure   bool
-		// HttpOnly bool
-		// Raw      string
-		// Unparsed []string
 	}
 
 	cookies = append(cookies, newCookie)
@@ -108,19 +100,21 @@ func TestSetCookies(t *testing.T) {
 	res, err := testCookieClient.Request(&Option{
 		Url: "http://httpbin.org/cookies",
 	})
-
 	if err != nil {
 		t.Error()
+		return
 	}
 
 	if res == nil {
 		t.Error()
+		return
 	}
 
 	data := decodeHttpbinRes(res)
 
 	if data.Cookies["cookie3"] != "ba" {
 		t.Error()
+		return
 	}
 }
 
@@ -139,19 +133,21 @@ func TestSetCookiesModify(t *testing.T) {
 	res, err := testCookieClient.Request(&Option{
 		Url: "https://httpbin.org/cookies",
 	})
-
 	if err != nil {
 		t.Error()
+		return
 	}
 
 	if res == nil {
 		t.Error()
+		return
 	}
 
 	data := decodeHttpbinRes(res)
 
 	if data.Cookies["cookie2"] != "hai" {
 		t.Error()
+		return
 	}
 }
 
@@ -211,9 +207,11 @@ func TestImportCookie(t *testing.T) {
 
 	if data.Cookies["cookie1"] != "1" {
 		t.Error()
+		return
 	}
 
 	if data.Cookies["cookie2"] != "2" {
 		t.Error()
+		return
 	}
 }

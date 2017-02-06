@@ -36,7 +36,8 @@ func init() {
 
 func TestNew(t *testing.T) {
 	if testClient.httpClient == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -46,25 +47,27 @@ func TestMakeURL(t *testing.T) {
 		"three": []string{"3", "ba", "trois"},
 		"email": []string{"ddo@ddo.me"},
 	})
-
 	if err != nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if u.String() != "https://httpbin.org/get?email=ddo%40ddo.me&one=1&three=3&three=ba&three=trois&two=2&two=hai" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
 func TestMakeURLNil(t *testing.T) {
 	u, err := makeURL("https://httpbin.org/get?one=1", nil)
-
 	if err != nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if u.String() != "https://httpbin.org/get?one=1" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -77,25 +80,27 @@ func TestMakeBody(t *testing.T) {
 			"email": []string{"ddo@ddo.me"},
 		},
 	})
-
 	if err != nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if body != "email=ddo%40ddo.me&one=1&one=mot&three=3&three=ba&three=trois&two=2&two=hai" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
 func TestMakeBodyNil(t *testing.T) {
 	body, err := makeBody(&Option{})
-
 	if err != nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if body != "" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -108,13 +113,14 @@ func TestMakeBodyForm(t *testing.T) {
 			"email": []string{"ddo@ddo.me"},
 		},
 	})
-
 	if err != nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if body != "email=ddo%40ddo.me&one=1&one=mot&three=3&three=ba&three=trois&two=2&two=hai" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -129,13 +135,14 @@ func TestMakeBodyJson(t *testing.T) {
 			},
 		},
 	})
-
 	if err != nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if body != `{"array":["3","ba","trois"],"int":1,"object":{"int":4},"string":"two"}` {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -151,15 +158,18 @@ func TestMakeHeader(t *testing.T) {
 	})
 
 	if req.Header["User-Agent"][0] != "" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if req.Header["Custom"][0] != "Custom header" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if req.Header["Custom2"][0] != " " {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -169,7 +179,8 @@ func TestMakeHeaderDefault(t *testing.T) {
 	makeHeader(req, &Option{})
 
 	if req.Header["User-Agent"][0] != defaultHeader {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -181,11 +192,13 @@ func TestMakeHeaderForm(t *testing.T) {
 	})
 
 	if req.Header["User-Agent"][0] != defaultHeader {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if req.Header["Content-Type"][0] != "application/x-www-form-urlencoded" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -197,11 +210,13 @@ func TestMakeHeaderJson(t *testing.T) {
 	})
 
 	if req.Header["User-Agent"][0] != defaultHeader {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if req.Header["Content-Type"][0] != "application/json" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -211,9 +226,9 @@ func TestRequest(t *testing.T) {
 	res, err := client.Request(&Option{
 		Url: "https://httpbin.org/ip",
 	})
-
 	if err != nil || res == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -223,17 +238,19 @@ func TestRequestRes(t *testing.T) {
 	res, err := client.Request(&Option{
 		Url: "https://httpbin.org/status/500",
 	})
-
 	if err != nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if res == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if res.StatusCode != 500 {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -243,9 +260,9 @@ func TestRequestDefaultUserAgent(t *testing.T) {
 	res, err := client.Request(&Option{
 		Url: "https://httpbin.org/get",
 	})
-
 	if err != nil || res == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	data := decodeHttpbinRes(res)
@@ -253,7 +270,8 @@ func TestRequestDefaultUserAgent(t *testing.T) {
 	userAgent := data.Headers["User-Agent"]
 
 	if userAgent != "" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -267,19 +285,21 @@ func TestRequestHeader(t *testing.T) {
 			"User-Agent": "",
 		},
 	})
-
 	if err != nil || res == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	data := decodeHttpbinRes(res)
 
 	if data.Headers["User-Agent"] != "" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if data.Headers["Custom"] != "Custom header" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -294,9 +314,9 @@ func TestRequestGET(t *testing.T) {
 			"email": []string{"ddo@ddo.me"},
 		},
 	})
-
 	if err != nil || res == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	data := decodeHttpbinRes(res)
@@ -307,31 +327,38 @@ func TestRequestGET(t *testing.T) {
 	three := data.Args["three"].([]interface{})
 
 	if email != "ddo@ddo.me" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if one != "1" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if two[0].(string) != "2" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if two[1].(string) != "hai" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if three[0].(string) != "3" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if three[1].(string) != "ba" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if three[2].(string) != "trois" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -346,19 +373,21 @@ func TestRequestPOSTStr(t *testing.T) {
 		},
 		BodyStr: "email=ddo%40ddo.me&three=3&three=ba&three=trois&two=2&two=hai",
 	})
-
 	if err != nil || res == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	data := decodeHttpbinRes(res)
 
 	if data.Args["one"].(string) != "1" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if data.Data != "email=ddo%40ddo.me&three=3&three=ba&three=trois&two=2&two=hai" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -377,19 +406,21 @@ func TestRequestPOST(t *testing.T) {
 			"email": []string{"ddo@ddo.me"},
 		},
 	})
-
 	if err != nil || res == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	data := decodeHttpbinRes(res)
 
 	if data.Args["one"].(string) != "1" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if data.Data != "email=ddo%40ddo.me&three=3&three=ba&three=trois&two=2&two=hai" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -411,43 +442,51 @@ func TestRequestPOSTJson(t *testing.T) {
 			},
 		},
 	})
-
 	if err != nil || res == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	data := decodeHttpbinRes(res)
 
 	if data.Args["one"].(string) != "1" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if data.Data != `{"array":["3","ba","trois"],"int":1,"object":{"int":4},"string":"two"}` {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if data.JSON.Int != 1 {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if data.JSON.String != "two" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if data.JSON.Array[0] != "3" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if data.JSON.Array[1] != "ba" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if data.JSON.Array[2] != "trois" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if data.JSON.Object["int"] != 4 {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -466,15 +505,16 @@ func TestRequestPOSTForm(t *testing.T) {
 			"email": []string{"ddo@ddo.me"},
 		},
 	})
-
 	if err != nil || res == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	data := decodeHttpbinRes(res)
 
 	if data.Args["one"].(string) != "1" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	email := data.Form["email"].(string)
@@ -482,27 +522,33 @@ func TestRequestPOSTForm(t *testing.T) {
 	three := data.Form["three"].([]interface{})
 
 	if email != "ddo@ddo.me" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if two[0].(string) != "2" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if two[1].(string) != "hai" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if three[0].(string) != "3" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if three[1].(string) != "ba" {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if three[2].(string) != "trois" {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -512,13 +558,14 @@ func TestRequestFail(t *testing.T) {
 	res, err := client.Request(&Option{
 		Url: "http://1.com",
 	})
-
 	if err == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if res != nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -528,13 +575,14 @@ func TestRequestStream(t *testing.T) {
 	res, err := client.Request(&Option{
 		Url: fmt.Sprintf("https://httpbin.org/stream/%v", streamLength),
 	})
-
 	if err != nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	if res == nil {
-		t.Fail()
+		t.Error()
+		return
 	}
 
 	// process stream
@@ -561,7 +609,8 @@ func TestRequestStream(t *testing.T) {
 	}
 
 	if counter != streamLength {
-		t.Fail()
+		t.Error()
+		return
 	}
 }
 
@@ -597,6 +646,5 @@ func decodeHttpbinRes(res *http.Response) *httpbinRes {
 	// debug(string(resBody))
 
 	json.Unmarshal(resBody, &data)
-
 	return &data
 }
