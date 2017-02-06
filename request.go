@@ -88,14 +88,12 @@ func (c *Client) SetProxy(proxyURLStr string) (err error) {
 
 // Request sends http request
 func (c *Client) Request(opt *Option) (res *http.Response, err error) {
-	debug("START")
-
 	//set GET as default method
 	if opt.Method == "" {
 		opt.Method = "GET"
 	}
-
 	opt.Method = strings.ToUpper(opt.Method)
+	debug(opt.Method)
 
 	//url
 	reqURL, err := makeURL(opt.Url, opt.Query)
@@ -199,7 +197,7 @@ func makeBody(opt *Option) (body string, err error) {
 }
 
 func makeHeader(req *http.Request, opt *Option) {
-	//default User-Agent
+	// default User-Agent
 	// req.Header.Set("User-Agent", "github.com/ddo/request")
 	req.Header.Set("User-Agent", " ") // == "" on the host side
 
