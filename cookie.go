@@ -62,8 +62,8 @@ func (c *Client) GetCookie(domain, name string) (value string, err error) {
 	return
 }
 
-// Cookie is a duplicate of http.Cookie but with json parser
-type Cookie struct {
+// cookie is a duplicate of http.Cookie but with json parser
+type cookie struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 
@@ -78,7 +78,7 @@ type Cookie struct {
 }
 
 // debug purpose
-func (c Cookie) String() string {
+func (c cookie) String() string {
 	return fmt.Sprintf("\nName\t\t:%s\nValue\t\t:%s\nPath\t\t:%s\nDomain\t\t:%s\nExpires\t\t:%v\nRawExpires\t:%s\nMaxAge\t\t:%v\nSecure\t\t:%v\nHttpOnly\t:%v\n-------------\n", c.Name, c.Value, c.Path, c.Domain, c.Expires, c.RawExpires, c.MaxAge, c.Secure, c.HttpOnly)
 }
 
@@ -86,7 +86,7 @@ func (c Cookie) String() string {
 func (c *Client) ImportCookie(domain, jsonStr string) (err error) {
 	debug("domain:", domain)
 
-	var cookies []Cookie
+	var cookies []cookie
 
 	err = json.Unmarshal([]byte(jsonStr), &cookies)
 	if err != nil {
@@ -105,7 +105,7 @@ func (c *Client) ImportCookie(domain, jsonStr string) (err error) {
 	return
 }
 
-func tohttpCookie(cookies []Cookie) (httpCookies []*http.Cookie) {
+func tohttpCookie(cookies []cookie) (httpCookies []*http.Cookie) {
 	debug()
 
 	var expires time.Time
