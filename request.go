@@ -63,6 +63,19 @@ func (c *Client) SetTimeout(timeout time.Duration) {
 	c.httpClient.Timeout = timeout
 }
 
+func (c *Client) SetProxy(proxyUrlStr string) (err error) {
+	debug(proxyUrlStr)
+
+	proxyUrl, err := url.Parse(proxyUrlStr)
+	if err != nil {
+		debug("ERR(url.Parse)", err)
+		return
+	}
+
+	c.httpClient.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
+	return
+}
+
 func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	debug("START")
 
