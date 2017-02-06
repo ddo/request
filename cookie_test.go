@@ -215,3 +215,29 @@ func TestImportCookie(t *testing.T) {
 		return
 	}
 }
+
+func TestExportCookie(t *testing.T) {
+	// create client with cookies
+	client := New()
+
+	res, err := client.Request(&Option{
+		Url: "http://httpbin.org/cookies/set?cookie1=1&cookie2=2",
+	})
+	if err != nil {
+		t.Error()
+		return
+	}
+	defer res.Body.Close()
+	// create client with cookies - end
+
+	jsonStr, err := client.ExportCookie("http://httpbin.org")
+	if err != nil {
+		t.Error()
+		return
+	}
+
+	if jsonStr != `[{"name":"cookie1","value":"1","path":"","domain":"","Expires":"0001-01-01T00:00:00Z","expires":"","expiry":0,"secure":false,"httponly":false},{"name":"cookie2","value":"2","path":"","domain":"","Expires":"0001-01-01T00:00:00Z","expires":"","expiry":0,"secure":false,"httponly":false}]` {
+		t.Error()
+		return
+	}
+}

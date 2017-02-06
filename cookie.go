@@ -135,4 +135,46 @@ func tohttpCookie(cookies []cookie) (httpCookies []*http.Cookie) {
 	return
 }
 
-// TODO: implement ImportCookie
+func toCookie(httpCookies []*http.Cookie) (cookies []cookie) {
+	debug()
+
+	for i := 0; i < len(httpCookies); i++ {
+		// new cookie
+		cookies = append(cookies, cookie{
+			Name:       httpCookies[i].Name,
+			Value:      httpCookies[i].Value,
+			Path:       httpCookies[i].Path,
+			Domain:     httpCookies[i].Domain,
+			Expires:    httpCookies[i].Expires,
+			RawExpires: httpCookies[i].RawExpires,
+			MaxAge:     httpCookies[i].MaxAge,
+			Secure:     httpCookies[i].Secure,
+			HttpOnly:   httpCookies[i].HttpOnly,
+		})
+	}
+
+	return
+}
+
+// ExportCookie exports client cookies as json
+func (c *Client) ExportCookie(domain string) (jsonStr string, err error) {
+	debug("domain:", domain)
+
+	httpCookies, err := c.GetCookies(domain)
+	if err != nil {
+		return
+	}
+	debug(httpCookies)
+
+	cookies := toCookie(httpCookies)
+	// debug(cookies)
+
+	jsonByte, err := json.Marshal(cookies)
+	if err != nil {
+		debug("ERR(json.Marshal)", err)
+		return
+	}
+
+	jsonStr = string(jsonByte)
+	return
+}
