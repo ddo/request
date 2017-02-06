@@ -154,3 +154,66 @@ func TestSetCookiesModify(t *testing.T) {
 		t.Error()
 	}
 }
+
+func TestImportCookie(t *testing.T) {
+	client := New()
+	err := client.ImportCookie("http://httpbin.org", `
+	[{
+		"domain": ".twitter.com",
+		"expires": "Wed, 06 Feb 2019 09:29:47 GMT",
+		"expiry": 1549445387,
+		"httponly": false,
+		"name": "guest_id",
+		"path": "/",
+		"secure": false,
+		"value": "v1%3A1486379578632445354"
+	}, {
+		"domain": "www.abc.com",
+		"httponly": false,
+		"name": "QSI_HistorySession",
+		"path": "/",
+		"secure": false,
+		"value": "http%3A%2F%2Fwww.abc.com%2Fus~1486373387091"
+	}, {
+		"domain": ".httpbin.org",
+		"httponly": false,
+		"name": "cookie1",
+		"path": "/",
+		"secure": false,
+		"value": "1"
+	}, {
+		"domain": "httpbin.org",
+		"httponly": false,
+		"name": "cookie2",
+		"path": "/",
+		"secure": false,
+		"value": "2"
+	}]`)
+	if err != nil {
+		t.Error()
+		return
+	}
+
+	// verify
+	res, err := client.Request(&Option{
+		Url: "https://httpbin.org/cookies",
+	})
+	if err != nil {
+		t.Error()
+		return
+	}
+	if res == nil {
+		t.Error()
+		return
+	}
+
+	data := decodeHttpbinRes(res)
+
+	if data.Cookies["cookie1"] != "1" {
+		t.Error()
+	}
+
+	if data.Cookies["cookie2"] != "2" {
+		t.Error()
+	}
+}
