@@ -5,12 +5,12 @@ import (
 	"testing"
 )
 
-var testing_cookieClient *Client
+var testCookieClient *Client
 
 func TestCookieInit(t *testing.T) {
-	testing_cookieClient = New()
+	testCookieClient = New()
 
-	res, err := testing_cookieClient.Request(&Option{
+	res, err := testCookieClient.Request(&Option{
 		Url: "http://httpbin.org/cookies/set?cookie1=one&cookie2=2",
 	})
 
@@ -34,7 +34,7 @@ func TestCookieInit(t *testing.T) {
 }
 
 func TestGetCookies(t *testing.T) {
-	cookies, err := testing_cookieClient.GetCookies("http://httpbin.org")
+	cookies, err := testCookieClient.GetCookies("http://httpbin.org")
 
 	if err != nil {
 		t.Error()
@@ -62,7 +62,7 @@ func TestGetCookies(t *testing.T) {
 }
 
 func TestGetCookie(t *testing.T) {
-	cookie2, err := testing_cookieClient.GetCookie("http://httpbin.org", "cookie2")
+	cookie2, err := testCookieClient.GetCookie("http://httpbin.org", "cookie2")
 
 	if err != nil {
 		t.Error()
@@ -103,9 +103,9 @@ func TestSetCookies(t *testing.T) {
 
 	cookies = append(cookies, newCookie)
 
-	testing_cookieClient.SetCookies("https://httpbin.org", cookies)
+	testCookieClient.SetCookies("https://httpbin.org", cookies)
 
-	res, err := testing_cookieClient.Request(&Option{
+	res, err := testCookieClient.Request(&Option{
 		Url: "http://httpbin.org/cookies",
 	})
 
@@ -125,7 +125,7 @@ func TestSetCookies(t *testing.T) {
 }
 
 func TestSetCookiesModify(t *testing.T) {
-	cookies, _ := testing_cookieClient.GetCookies("http://httpbin.org")
+	cookies, _ := testCookieClient.GetCookies("http://httpbin.org")
 
 	// override the old one
 	for i := 0; i < len(cookies); i++ {
@@ -134,9 +134,9 @@ func TestSetCookiesModify(t *testing.T) {
 		}
 	}
 
-	testing_cookieClient.SetCookies("http://httpbin.org", cookies)
+	testCookieClient.SetCookies("http://httpbin.org", cookies)
 
-	res, err := testing_cookieClient.Request(&Option{
+	res, err := testCookieClient.Request(&Option{
 		Url: "https://httpbin.org/cookies",
 	})
 

@@ -12,20 +12,23 @@ import (
 )
 
 const (
-	DEFAULT_TIMEOUT = 180
+	// DefaultTimeout is request timeout in second
+	DefaultTimeout = 180
 )
 
 var debug = dlog.New("request", nil)
 
+// Client is an http client that hold init settings and cookies
 type Client struct {
 	httpClient *http.Client
 }
 
+// New return a new Client
 func New() *Client {
 	var cookie, _ = cookiejar.New(nil)
 
 	client := &http.Client{
-		Timeout: time.Second * DEFAULT_TIMEOUT,
+		Timeout: time.Second * DefaultTimeout,
 		Jar:     cookie,
 	}
 
@@ -33,49 +36,57 @@ func New() *Client {
 	return &Client{client}
 }
 
+// NewNoCookie return a new Client that won't save cookies
 func NewNoCookie() *Client {
 	client := &http.Client{
-		Timeout: time.Second * DEFAULT_TIMEOUT,
+		Timeout: time.Second * DefaultTimeout,
 	}
 
 	debug()
 	return &Client{client}
 }
 
+// Data is the body of http request
 type Data map[string][]string
+
+// Header is the header of http request
 type Header map[string]string
 
+// Option holds all the #Request requirements
 type Option struct {
-	Url      string //required
-	Method   string //default: "GET", anything "POST", "PUT", "DELETE" or "PATCH"
+	Url      string // required
+	Method   string // default: "GET", anything "POST", "PUT", "DELETE" or "PATCH"
 	BodyStr  string
 	Body     *Data
-	Form     *Data       //set Content-Type header as "application/x-www-form-urlencoded"
-	Json     interface{} //set Content-Type header as "application/json"
+	Form     *Data       // set Content-Type header as "application/x-www-form-urlencoded"
+	Json     interface{} // set Content-Type header as "application/json"
 	Query    *Data
 	QueryRaw string
 	Header   *Header
 }
 
+// SetTimeout sets client timeout
 func (c *Client) SetTimeout(timeout time.Duration) {
 	debug(timeout)
 
 	c.httpClient.Timeout = timeout
 }
 
-func (c *Client) SetProxy(proxyUrlStr string) (err error) {
-	debug(proxyUrlStr)
+// SetProxy sets client proxy
+func (c *Client) SetProxy(proxyURLStr string) (err error) {
+	debug(proxyURLStr)
 
-	proxyUrl, err := url.Parse(proxyUrlStr)
+	proxyURL, err := url.Parse(proxyURLStr)
 	if err != nil {
 		debug("ERR(url.Parse)", err)
 		return
 	}
 
-	c.httpClient.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
+	c.httpClient.Transport = &http.Transport{Proxy: http.ProxyURL(proxyURL)}
 	return
 }
 
+// Request sends http request
 func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	debug("START")
 
@@ -87,7 +98,7 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	opt.Method = strings.ToUpper(opt.Method)
 
 	//url
-	reqUrl, err := makeUrl(opt.Url, opt.Query)
+	reqURL, err := makeURL(opt.Url, opt.Query)
 
 	if err != nil {
 		return
@@ -100,7 +111,7 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 		return
 	}
 
-	req, err := http.NewRequest(opt.Method, reqUrl.String()+opt.QueryRaw, strings.NewReader(reqBody))
+	req, err := http.NewRequest(opt.Method, reqURL.String()+opt.QueryRaw, strings.NewReader(reqBody))
 
 	if err != nil {
 		debug("ERR(req)", err)
@@ -122,7 +133,7 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	return
 }
 
-func makeUrl(urlStr string, query *Data) (u *url.URL, err error) {
+func makeURL(urlStr string, query *Data) (u *url.URL, err error) {
 	u, err = url.Parse(urlStr)
 
 	if err != nil {

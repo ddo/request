@@ -5,6 +5,7 @@ import (
 	"net/url"
 )
 
+// GetCookies gets []*http.Cookie by domain
 func (c *Client) GetCookies(domain string) (cookies []*http.Cookie, err error) {
 	debug(domain)
 
@@ -19,6 +20,7 @@ func (c *Client) GetCookies(domain string) (cookies []*http.Cookie, err error) {
 	return
 }
 
+// SetCookies sets cookies by domain
 func (c *Client) SetCookies(domain string, cookies []*http.Cookie) (err error) {
 	debug(domain)
 	debug(cookies)
@@ -34,6 +36,7 @@ func (c *Client) SetCookies(domain string, cookies []*http.Cookie) (err error) {
 	return
 }
 
+// GetCookie gets cookie value by domain and cookie name
 func (c *Client) GetCookie(domain, name string) (value string, err error) {
 	debug(domain, name)
 

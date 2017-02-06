@@ -1,5 +1,18 @@
 package request
 
+// TODO: add tests
+// GetCookies	71.4%
+// SetCookies	75.0%
+// GetCookie	69.2%
+// New			100.0%
+// NewNoCookie	0.0%
+// SetTimeout	0.0%
+// SetProxy		0.0%
+// Request		81.8%
+// makeURL		83.3%
+// makeBody		89.5%
+// makeHeader	100.0%
+
 import (
 	"encoding/json"
 	"fmt"
@@ -11,24 +24,24 @@ import (
 )
 
 const (
-	DEFAULT_HEADER = " "
-	STREAM_LENGTH  = 50
+	defaultHeader = " "
+	streamLength  = 50
 )
 
-var tesing_client *Client
+var testClient *Client
 
 func init() {
-	tesing_client = New()
+	testClient = New()
 }
 
 func TestNew(t *testing.T) {
-	if tesing_client.httpClient == nil {
+	if testClient.httpClient == nil {
 		t.Fail()
 	}
 }
 
-func TestMakeUrl(t *testing.T) {
-	u, err := makeUrl("https://httpbin.org/get?one=1", &Data{
+func TestMakeURL(t *testing.T) {
+	u, err := makeURL("https://httpbin.org/get?one=1", &Data{
 		"two":   []string{"2", "hai"},
 		"three": []string{"3", "ba", "trois"},
 		"email": []string{"ddo@ddo.me"},
@@ -43,8 +56,8 @@ func TestMakeUrl(t *testing.T) {
 	}
 }
 
-func TestMakeUrlNil(t *testing.T) {
-	u, err := makeUrl("https://httpbin.org/get?one=1", nil)
+func TestMakeURLNil(t *testing.T) {
+	u, err := makeURL("https://httpbin.org/get?one=1", nil)
 
 	if err != nil {
 		t.Fail()
@@ -155,7 +168,7 @@ func TestMakeHeaderDefault(t *testing.T) {
 
 	makeHeader(req, &Option{})
 
-	if req.Header["User-Agent"][0] != DEFAULT_HEADER {
+	if req.Header["User-Agent"][0] != defaultHeader {
 		t.Fail()
 	}
 }
@@ -167,7 +180,7 @@ func TestMakeHeaderForm(t *testing.T) {
 		Form: &Data{},
 	})
 
-	if req.Header["User-Agent"][0] != DEFAULT_HEADER {
+	if req.Header["User-Agent"][0] != defaultHeader {
 		t.Fail()
 	}
 
@@ -183,7 +196,7 @@ func TestMakeHeaderJson(t *testing.T) {
 		Json: &Data{},
 	})
 
-	if req.Header["User-Agent"][0] != DEFAULT_HEADER {
+	if req.Header["User-Agent"][0] != defaultHeader {
 		t.Fail()
 	}
 
@@ -413,27 +426,27 @@ func TestRequestPOSTJson(t *testing.T) {
 		t.Fail()
 	}
 
-	if data.Json.Int != 1 {
+	if data.JSON.Int != 1 {
 		t.Fail()
 	}
 
-	if data.Json.String != "two" {
+	if data.JSON.String != "two" {
 		t.Fail()
 	}
 
-	if data.Json.Array[0] != "3" {
+	if data.JSON.Array[0] != "3" {
 		t.Fail()
 	}
 
-	if data.Json.Array[1] != "ba" {
+	if data.JSON.Array[1] != "ba" {
 		t.Fail()
 	}
 
-	if data.Json.Array[2] != "trois" {
+	if data.JSON.Array[2] != "trois" {
 		t.Fail()
 	}
 
-	if data.Json.Object["int"] != 4 {
+	if data.JSON.Object["int"] != 4 {
 		t.Fail()
 	}
 }
@@ -513,7 +526,7 @@ func TestRequestStream(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url: fmt.Sprintf("https://httpbin.org/stream/%v", STREAM_LENGTH),
+		Url: fmt.Sprintf("https://httpbin.org/stream/%v", streamLength),
 	})
 
 	if err != nil {
@@ -542,33 +555,32 @@ func TestRequestStream(t *testing.T) {
 		// ignore the error
 		if err != nil {
 			panic(err)
-			break
 		}
 
 		counter++
 	}
 
-	if counter != STREAM_LENGTH {
+	if counter != streamLength {
 		t.Fail()
 	}
 }
 
 ////// helper
 
-type httpbinResJson struct {
-	Int    int            `json:int`
-	String string         `json:string`
-	Array  []string       `json:array`
-	Object map[string]int `json:object`
+type httpbinResJSON struct {
+	Int    int            `json:"int"`
+	String string         `json:"string"`
+	Array  []string       `json:"array"`
+	Object map[string]int `json:"object"`
 }
 
 type httpbinRes struct {
-	Args    map[string]interface{} `json:args`
-	Headers map[string]string      `json:headers`
-	Data    string                 `json:data`
-	Form    map[string]interface{} `json:form`
-	Json    httpbinResJson         `json:json`
-	Cookies map[string]string      `json:cookies`
+	Args    map[string]interface{} `json:"args"`
+	Headers map[string]string      `json:"headers"`
+	Data    string                 `json:"data"`
+	Form    map[string]interface{} `json:"form"`
+	JSON    httpbinResJSON         `json:"json"`
+	Cookies map[string]string      `json:"cookies"`
 }
 
 func decodeHttpbinRes(res *http.Response) *httpbinRes {
