@@ -82,29 +82,6 @@ func (c cookie) String() string {
 	return fmt.Sprintf("\nName\t\t:%s\nValue\t\t:%s\nPath\t\t:%s\nDomain\t\t:%s\nExpires\t\t:%v\nRawExpires\t:%s\nMaxAge\t\t:%v\nSecure\t\t:%v\nHttpOnly\t:%v\n-------------\n", c.Name, c.Value, c.Path, c.Domain, c.Expires, c.RawExpires, c.MaxAge, c.Secure, c.HttpOnly)
 }
 
-// ImportCookie imports cookie from json
-func (c *Client) ImportCookie(domain, jsonStr string) (err error) {
-	debug("domain:", domain)
-
-	var cookies []cookie
-
-	err = json.Unmarshal([]byte(jsonStr), &cookies)
-	if err != nil {
-		debug("ERR(json.Unmarshal)", err)
-		return
-	}
-
-	// debug(cookies)
-
-	httpCookies := tohttpCookie(cookies)
-
-	err = c.SetCookies(domain, httpCookies)
-	if err != nil {
-		return
-	}
-	return
-}
-
 func tohttpCookie(cookies []cookie) (httpCookies []*http.Cookie) {
 	debug()
 
@@ -156,6 +133,28 @@ func toCookie(httpCookies []*http.Cookie) (cookies []cookie) {
 	return
 }
 
+// ImportCookie imports cookie from json
+func (c *Client) ImportCookie(domain, jsonStr string) (err error) {
+	debug("domain:", domain)
+
+	var cookies []cookie
+
+	err = json.Unmarshal([]byte(jsonStr), &cookies)
+	if err != nil {
+		debug("ERR(json.Unmarshal)", err)
+		return
+	}
+	// debug(cookies)
+
+	httpCookies := tohttpCookie(cookies)
+
+	err = c.SetCookies(domain, httpCookies)
+	if err != nil {
+		return
+	}
+	return
+}
+
 // ExportCookie exports client cookies as json
 func (c *Client) ExportCookie(domain string) (jsonStr string, err error) {
 	debug("domain:", domain)
@@ -164,7 +163,6 @@ func (c *Client) ExportCookie(domain string) (jsonStr string, err error) {
 	if err != nil {
 		return
 	}
-	debug(httpCookies)
 
 	cookies := toCookie(httpCookies)
 	// debug(cookies)
@@ -178,3 +176,6 @@ func (c *Client) ExportCookie(domain string) (jsonStr string, err error) {
 	jsonStr = string(jsonByte)
 	return
 }
+
+// TODO: should map Expires?
+// TODO: defer res.Body.Close() in tests
