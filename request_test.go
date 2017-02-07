@@ -226,10 +226,15 @@ func TestRequest(t *testing.T) {
 	res, err := client.Request(&Option{
 		Url: "https://httpbin.org/ip",
 	})
-	if err != nil || res == nil {
+	if err != nil {
 		t.Error()
 		return
 	}
+	if res == nil {
+		t.Error()
+		return
+	}
+	defer res.Body.Close()
 }
 
 func TestRequestRes(t *testing.T) {
@@ -242,11 +247,11 @@ func TestRequestRes(t *testing.T) {
 		t.Error()
 		return
 	}
-
 	if res == nil {
 		t.Error()
 		return
 	}
+	defer res.Body.Close()
 
 	if res.StatusCode != 500 {
 		t.Error()
@@ -260,7 +265,11 @@ func TestRequestDefaultUserAgent(t *testing.T) {
 	res, err := client.Request(&Option{
 		Url: "https://httpbin.org/get",
 	})
-	if err != nil || res == nil {
+	if err != nil {
+		t.Error()
+		return
+	}
+	if res == nil {
 		t.Error()
 		return
 	}
@@ -285,7 +294,11 @@ func TestRequestHeader(t *testing.T) {
 			"User-Agent": "",
 		},
 	})
-	if err != nil || res == nil {
+	if err != nil {
+		t.Error()
+		return
+	}
+	if res == nil {
 		t.Error()
 		return
 	}
@@ -314,7 +327,11 @@ func TestRequestGET(t *testing.T) {
 			"email": []string{"ddo@ddo.me"},
 		},
 	})
-	if err != nil || res == nil {
+	if err != nil {
+		t.Error()
+		return
+	}
+	if res == nil {
 		t.Error()
 		return
 	}
@@ -373,7 +390,11 @@ func TestRequestPOSTStr(t *testing.T) {
 		},
 		BodyStr: "email=ddo%40ddo.me&three=3&three=ba&three=trois&two=2&two=hai",
 	})
-	if err != nil || res == nil {
+	if err != nil {
+		t.Error()
+		return
+	}
+	if res == nil {
 		t.Error()
 		return
 	}
@@ -406,7 +427,11 @@ func TestRequestPOST(t *testing.T) {
 			"email": []string{"ddo@ddo.me"},
 		},
 	})
-	if err != nil || res == nil {
+	if err != nil {
+		t.Error()
+		return
+	}
+	if res == nil {
 		t.Error()
 		return
 	}
@@ -442,7 +467,11 @@ func TestRequestPOSTJson(t *testing.T) {
 			},
 		},
 	})
-	if err != nil || res == nil {
+	if err != nil {
+		t.Error()
+		return
+	}
+	if res == nil {
 		t.Error()
 		return
 	}
@@ -505,7 +534,11 @@ func TestRequestPOSTForm(t *testing.T) {
 			"email": []string{"ddo@ddo.me"},
 		},
 	})
-	if err != nil || res == nil {
+	if err != nil {
+		t.Error()
+		return
+	}
+	if res == nil {
 		t.Error()
 		return
 	}
@@ -562,7 +595,6 @@ func TestRequestFail(t *testing.T) {
 		t.Error()
 		return
 	}
-
 	if res != nil {
 		t.Error()
 		return
@@ -579,11 +611,11 @@ func TestRequestStream(t *testing.T) {
 		t.Error()
 		return
 	}
-
 	if res == nil {
 		t.Error()
 		return
 	}
+	defer res.Body.Close()
 
 	// process stream
 	counter := 0

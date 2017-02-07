@@ -176,6 +176,3 @@ func (c *Client) ExportCookie(domain string) (jsonStr string, err error) {
 	jsonStr = string(jsonByte)
 	return
 }
-
-// TODO: should map Expires?
-// TODO: defer res.Body.Close() in tests
