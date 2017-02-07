@@ -82,7 +82,7 @@ func (c cookie) String() string {
 	return fmt.Sprintf("\nName\t\t:%s\nValue\t\t:%s\nPath\t\t:%s\nDomain\t\t:%s\nExpires\t\t:%v\nRawExpires\t:%s\nMaxAge\t\t:%v\nSecure\t\t:%v\nHttpOnly\t:%v\n-------------\n", c.Name, c.Value, c.Path, c.Domain, c.Expires, c.RawExpires, c.MaxAge, c.Secure, c.HttpOnly)
 }
 
-func tohttpCookie(cookies []cookie) (httpCookies []*http.Cookie) {
+func tohttpCookie(cookies []*cookie) (httpCookies []*http.Cookie) {
 	debug()
 
 	var expires time.Time
@@ -112,12 +112,12 @@ func tohttpCookie(cookies []cookie) (httpCookies []*http.Cookie) {
 	return
 }
 
-func toCookie(httpCookies []*http.Cookie) (cookies []cookie) {
+func toCookie(httpCookies []*http.Cookie) (cookies []*cookie) {
 	debug()
 
 	for i := 0; i < len(httpCookies); i++ {
 		// new cookie
-		cookies = append(cookies, cookie{
+		cookies = append(cookies, &cookie{
 			Name:       httpCookies[i].Name,
 			Value:      httpCookies[i].Value,
 			Path:       httpCookies[i].Path,
@@ -137,7 +137,7 @@ func toCookie(httpCookies []*http.Cookie) (cookies []cookie) {
 func (c *Client) ImportCookie(domain, jsonStr string) (err error) {
 	debug("domain:", domain)
 
-	var cookies []cookie
+	var cookies []*cookie
 
 	err = json.Unmarshal([]byte(jsonStr), &cookies)
 	if err != nil {
