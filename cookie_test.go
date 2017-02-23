@@ -236,7 +236,9 @@ func TestExportCookie(t *testing.T) {
 		return
 	}
 
-	if jsonStr != `[{"name":"cookie1","value":"1","path":"","domain":"","Expires":"0001-01-01T00:00:00Z","expires":"","expiry":0,"secure":false,"httponly":false},{"name":"cookie2","value":"2","path":"","domain":"","Expires":"0001-01-01T00:00:00Z","expires":"","expiry":0,"secure":false,"httponly":false}]` {
+	debug(jsonStr)
+
+	if jsonStr != `[{"name":"cookie1","value":"1","path":"/","domain":"httpbin.org","secure":false,"httponly":false},{"name":"cookie2","value":"2","path":"/","domain":"httpbin.org","secure":false,"httponly":false}]` {
 		t.Error()
 		return
 	}

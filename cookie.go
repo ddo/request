@@ -67,12 +67,14 @@ type cookie struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 
-	Path       string `json:"path"`
-	Domain     string `json:"domain"`
-	Expires    time.Time
-	RawExpires string `json:"expires"` // for reading cookies only
+	Path       string    `json:"path"`
+	Domain     string    `json:"domain"`
+	Expires    time.Time `json:"-"`
+	RawExpires string    `json:"expires,omitempty"` // for reading cookies only
 
-	MaxAge   int  `json:"expiry"`
+	// Expiry int64 `json:"expiry"`
+
+	MaxAge   int  `json:"maxage,omitempty"`
 	Secure   bool `json:"secure"`
 	HttpOnly bool `json:"httponly"`
 }
