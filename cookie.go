@@ -38,6 +38,7 @@ func (c *Client) SetCookies(domain string, cookies []*http.Cookie) (err error) {
 }
 
 // GetCookie gets cookie value by domain and cookie name
+// stdlib cookie jar just export cookie name and value
 func (c *Client) GetCookie(domain, name string) (value string, err error) {
 	debug(domain, name)
 
@@ -158,6 +159,7 @@ func (c *Client) ImportCookie(domain, jsonStr string) (err error) {
 }
 
 // ExportCookie exports client cookies as json
+// stdlib cookie jar just export cookie name and value
 func (c *Client) ExportCookie(domain string) (jsonStr string, err error) {
 	debug("domain:", domain)
 
