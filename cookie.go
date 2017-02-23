@@ -1,6 +1,7 @@
 package request
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -169,14 +170,20 @@ func (c *Client) ExportCookie(domain string) (jsonStr string, err error) {
 	}
 
 	cookies := toCookie(httpCookies)
-	// debug(cookies)
 
-	jsonByte, err := json.Marshal(cookies)
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	enc.SetEscapeHTML(true)
+
+	err = enc.Encode(cookies)
 	if err != nil {
 		debug("ERR(json.Marshal)", err)
 		return
 	}
 
-	jsonStr = string(jsonByte)
+	// remove new line at tail
+	buf.Truncate(buf.Len() - 1)
+
+	jsonStr = buf.String()
 	return
 }
