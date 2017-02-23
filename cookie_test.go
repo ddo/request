@@ -236,10 +236,8 @@ func TestExportCookie(t *testing.T) {
 		return
 	}
 
-	debug(jsonStr)
-
 	if jsonStr != `[{"name":"cookie1","value":"1","path":"/","domain":"httpbin.org","secure":false,"httponly":false},{"name":"cookie2","value":"2","path":"/","domain":"httpbin.org","secure":false,"httponly":false}]` {
-		t.Error()
+		t.Error(jsonStr)
 		return
 	}
 }
