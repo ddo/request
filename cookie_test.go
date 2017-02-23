@@ -236,12 +236,11 @@ func TestExportCookie(t *testing.T) {
 		return
 	}
 
-	sample := `[{"name":"cookie1","value":"1","path":"/","domain":"httpbin.org","secure":false,"httponly":false},{"name":"cookie2","value":"2","path":"/","domain":"httpbin.org","secure":false,"httponly":false}]`
-	sampleVanilla := `[{"name":"cookie1","value":"1","path":"/","domain":"httpbin.org","secure":false,"httponly":false},{"name":"cookie2","value":"2","path":"/","domain":"httpbin.org","secure":false,"httponly":false}]`
+	sample := `[{"name":"cookie1","value":"1","path":"","domain":"","secure":false,"httponly":false},{"name":"cookie2","value":"2","path":"","domain":"","secure":false,"httponly":false}]`
+	sampleCustomCookieJar := `[{"name":"cookie1","value":"1","path":"/","domain":"httpbin.org","secure":false,"httponly":false},{"name":"cookie2","value":"2","path":"/","domain":"httpbin.org","secure":false,"httponly":false}]`
 
 	// NOTE: local test on a customize cookie jar
-	// sampleVanilla for vanilla source code
-	if jsonStr != sampleVanilla && jsonStr != sample {
+	if jsonStr != sample && jsonStr != sampleCustomCookieJar {
 		t.Error(jsonStr)
 		return
 	}
