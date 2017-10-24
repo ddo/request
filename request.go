@@ -2,9 +2,11 @@ package request
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -54,12 +56,12 @@ type Header map[string]string
 
 // Option holds all the #Request requirements
 type Option struct {
-	Url      string // required
+	URL      string // required
 	Method   string // default: "GET", anything "POST", "PUT", "DELETE" or "PATCH"
 	BodyStr  string
 	Body     *Data
 	Form     *Data       // set Content-Type header as "application/x-www-form-urlencoded"
-	Json     interface{} // set Content-Type header as "application/json"
+	JSON     interface{} // set Content-Type header as "application/json"
 	Query    *Data
 	QueryRaw string
 	Header   *Header
@@ -73,17 +75,16 @@ func (c *Client) SetTimeout(timeout time.Duration) {
 }
 
 // Request sends http request
-func (c *Client) Request(opt *Option) (res *http.Response, err error) {
+func (c *Client) Request(opt *Option) (data []byte, res *http.Response, err error) {
 	//set GET as default method
 	if opt.Method == "" {
 		opt.Method = "GET"
 	}
 
 	opt.Method = strings.ToUpper(opt.Method)
-	debug(opt.Method)
 
 	//url
-	reqURL, err := makeURL(opt.Url, opt.Query)
+	reqURL, err := makeURL(opt.URL, opt.Query)
 	if err != nil {
 		return
 	}
@@ -103,14 +104,26 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	//header
 	makeHeader(req, opt)
 
+	debug(req.Method, "\t>", req.URL.String())
+	now := time.Now()
+
 	res, err = c.httpClient.Do(req)
 	if err != nil {
-		debug("ERR(http)", err)
+		debug("ERR", "\t<", err, humanizeNano(time.Now().Sub(now)))
+		return
+	}
+	defer res.Body.Close()
+
+	debug(res.StatusCode, "\t<", res.Request.URL, humanizeNano(time.Now().Sub(now)))
+
+	// read all
+	// it's a good practice to read all data so golang http can reuse requests
+	data, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		debug("ERR(ReadAll)", err)
 		return
 	}
 
-	debug(res.Request.URL)
-	debug("DONE", res.Status)
 	return
 }
 
@@ -145,8 +158,8 @@ func makeBody(opt *Option) (body string, err error) {
 		body = opt.BodyStr
 		return
 
-	case opt.Json != nil:
-		jsonStr, err := json.Marshal(opt.Json)
+	case opt.JSON != nil:
+		jsonStr, err := json.Marshal(opt.JSON)
 		if err != nil {
 			debug("ERR:", err)
 			return body, err
@@ -186,7 +199,7 @@ func makeHeader(req *http.Request, opt *Option) {
 	case opt.Form != nil:
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	case opt.Json != nil:
+	case opt.JSON != nil:
 		req.Header.Set("Content-Type", "application/json")
 	}
 
@@ -197,4 +210,24 @@ func makeHeader(req *http.Request, opt *Option) {
 	for key, value := range *opt.Header {
 		req.Header.Set(key, value)
 	}
+}
+
+func humanizeNano(n time.Duration) string {
+	var suffix string
+
+	switch {
+	case n > 1e9:
+		n /= 1e9
+		suffix = "s"
+	case n > 1e6:
+		n /= 1e6
+		suffix = "ms"
+	case n > 1e3:
+		n /= 1e3
+		suffix = "us"
+	default:
+		suffix = "ns"
+	}
+
+	return strconv.Itoa(int(n)) + suffix
 }
