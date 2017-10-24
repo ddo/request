@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -80,7 +81,6 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	}
 
 	opt.Method = strings.ToUpper(opt.Method)
-	debug(opt.Method)
 
 	//url
 	reqURL, err := makeURL(opt.URL, opt.Query)
@@ -103,14 +103,16 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	//header
 	makeHeader(req, opt)
 
+	debug(req.Method, "\t>", req.URL.String())
+	now := time.Now()
+
 	res, err = c.httpClient.Do(req)
 	if err != nil {
-		debug("ERR(http)", err)
+		debug("ERR", "\t<", err, humanizeNano(time.Now().Sub(now)))
 		return
 	}
 
-	debug(res.Request.URL)
-	debug("DONE", res.Status)
+	debug(res.StatusCode, "\t<", res.Request.URL, humanizeNano(time.Now().Sub(now)))
 	return
 }
 
@@ -197,4 +199,24 @@ func makeHeader(req *http.Request, opt *Option) {
 	for key, value := range *opt.Header {
 		req.Header.Set(key, value)
 	}
+}
+
+func humanizeNano(n time.Duration) string {
+	var suffix string
+
+	switch {
+	case n > 1e9:
+		n /= 1e9
+		suffix = "s"
+	case n > 1e6:
+		n /= 1e6
+		suffix = "ms"
+	case n > 1e3:
+		n /= 1e3
+		suffix = "us"
+	default:
+		suffix = "ns"
+	}
+
+	return strconv.Itoa(int(n)) + suffix
 }
