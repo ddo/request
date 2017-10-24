@@ -9,10 +9,10 @@ import (
 func main() {
 	client := request.New()
 
-	res, err := client.Request(&request.Option{
-		Url:    "https://httpbin.org/post",
+	data, res, err := client.Request(&request.Option{
+		URL:    "https://httpbin.org/post",
 		Method: "POST",
-		Json: map[string]interface{}{
+		JSON: map[string]interface{}{
 			"int":    1,
 			"string": "two",
 			"array":  []string{"3", "ba", "trois"},
@@ -21,12 +21,10 @@ func main() {
 			},
 		},
 	})
-
 	if err != nil {
 		panic(err)
 	}
 
-	defer res.Body.Close()
-
-	fmt.Println(res)
+	fmt.Println(res.Status)
+	fmt.Println(string(data))
 }

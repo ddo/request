@@ -8,18 +8,18 @@
 [semaphoreci-url]: https://semaphoreci.com/ddo/request
 
 ## installation
-```sh
+```shell
 go get gopkg.in/ddo/request.v1
 ```
 
 ## option
 
-* Url     ``string`` required
+* URL     ``string`` required
 * Method  ``string`` default: "GET", anything "POST", "PUT", "DELETE" or "PATCH"
 * BodyStr ``string``
 * Body    ``*Data``
 * Form    ``*Data``       set Content-Type header as "application/x-www-form-urlencoded"
-* Json    ``interface{}`` set Content-Type header as "application/json"
+* JSON    ``interface{}`` set Content-Type header as "application/json"
 * Query   ``*Data``
 * Header  ``*Header``
 
@@ -27,23 +27,19 @@ go get gopkg.in/ddo/request.v1
 
 ```go
 client := request.New()
-
-res, err := client.Request(&request.Option{
-    Url: "https://httpbin.org/get",
+data, res, err := client.Request(&request.Option{
+    URL: "https://httpbin.org/get",
 })
-
 if err != nil {
     panic(err)
 }
-
-defer res.Body.Close()
 ```
 
 ### POST
 
 ```go
-res, err := client.Request(&request.Option{
-    Url:    "https://httpbin.org/post",
+data, res, err := client.Request(&request.Option{
+    URL:    "https://httpbin.org/post",
     Method: "POST",
     Body: &request.Data{
         "two":   []string{"2", "hai"},
@@ -56,8 +52,8 @@ res, err := client.Request(&request.Option{
 ### POST form
 
 ```go
-res, err := client.Request(&request.Option{
-    Url:    "https://httpbin.org/post",
+data, res, err := client.Request(&request.Option{
+    URL:    "https://httpbin.org/post",
     Method: "POST",
     Form: &request.Data{
         "two":   []string{"2", "hai"},
@@ -67,13 +63,13 @@ res, err := client.Request(&request.Option{
 })
 ```
 
-### Json
+### JSON
 
 ```go
-res, err := client.Request(&request.Option{
-    Url:    "https://httpbin.org/post",
+data, res, err := client.Request(&request.Option{
+    URL:    "https://httpbin.org/post",
     Method: "POST",
-    Json: map[string]interface{}{
+    JSON: map[string]interface{}{
         "int":    1,
         "string": "two",
         "array":  []string{"3", "ba", "trois"},
@@ -88,7 +84,7 @@ res, err := client.Request(&request.Option{
 
 to enable log set environment variable as
 
-```go
+```shell
 DLOG=*
 ```
 
