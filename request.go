@@ -54,12 +54,12 @@ type Header map[string]string
 
 // Option holds all the #Request requirements
 type Option struct {
-	Url      string // required
+	URL      string // required
 	Method   string // default: "GET", anything "POST", "PUT", "DELETE" or "PATCH"
 	BodyStr  string
 	Body     *Data
 	Form     *Data       // set Content-Type header as "application/x-www-form-urlencoded"
-	Json     interface{} // set Content-Type header as "application/json"
+	JSON     interface{} // set Content-Type header as "application/json"
 	Query    *Data
 	QueryRaw string
 	Header   *Header
@@ -83,7 +83,7 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 	debug(opt.Method)
 
 	//url
-	reqURL, err := makeURL(opt.Url, opt.Query)
+	reqURL, err := makeURL(opt.URL, opt.Query)
 	if err != nil {
 		return
 	}
@@ -145,8 +145,8 @@ func makeBody(opt *Option) (body string, err error) {
 		body = opt.BodyStr
 		return
 
-	case opt.Json != nil:
-		jsonStr, err := json.Marshal(opt.Json)
+	case opt.JSON != nil:
+		jsonStr, err := json.Marshal(opt.JSON)
 		if err != nil {
 			debug("ERR:", err)
 			return body, err
@@ -186,7 +186,7 @@ func makeHeader(req *http.Request, opt *Option) {
 	case opt.Form != nil:
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	case opt.Json != nil:
+	case opt.JSON != nil:
 		req.Header.Set("Content-Type", "application/json")
 	}
 

@@ -126,7 +126,7 @@ func TestMakeBodyForm(t *testing.T) {
 
 func TestMakeBodyJson(t *testing.T) {
 	body, err := makeBody(&Option{
-		Json: map[string]interface{}{
+		JSON: map[string]interface{}{
 			"int":    1,
 			"string": "two",
 			"array":  []string{"3", "ba", "trois"},
@@ -206,7 +206,7 @@ func TestMakeHeaderJson(t *testing.T) {
 	req, _ := http.NewRequest("POST", "https://httpbin.org", strings.NewReader(""))
 
 	makeHeader(req, &Option{
-		Json: &Data{},
+		JSON: &Data{},
 	})
 
 	if req.Header["User-Agent"][0] != defaultHeader {
@@ -224,7 +224,7 @@ func TestRequest(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url: "https://httpbin.org/ip",
+		URL: "https://httpbin.org/ip",
 	})
 	if err != nil {
 		t.Error()
@@ -241,7 +241,7 @@ func TestRequestRes(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url: "https://httpbin.org/status/500",
+		URL: "https://httpbin.org/status/500",
 	})
 	if err != nil {
 		t.Error()
@@ -263,7 +263,7 @@ func TestRequestDefaultUserAgent(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url: "https://httpbin.org/get",
+		URL: "https://httpbin.org/get",
 	})
 	if err != nil {
 		t.Error()
@@ -288,7 +288,7 @@ func TestRequestHeader(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url: "https://httpbin.org/get",
+		URL: "https://httpbin.org/get",
 		Header: &Header{
 			"Custom":     "Custom header",
 			"User-Agent": "",
@@ -320,7 +320,7 @@ func TestRequestGET(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url: "https://httpbin.org/get?one=1",
+		URL: "https://httpbin.org/get?one=1",
 		Query: &Data{
 			"two":   []string{"2", "hai"},
 			"three": []string{"3", "ba", "trois"},
@@ -383,7 +383,7 @@ func TestRequestPOSTStr(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url:    "https://httpbin.org/post",
+		URL:    "https://httpbin.org/post",
 		Method: "POST",
 		Query: &Data{
 			"one": []string{"1"},
@@ -416,7 +416,7 @@ func TestRequestPOST(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url:    "https://httpbin.org/post",
+		URL:    "https://httpbin.org/post",
 		Method: "POST",
 		Query: &Data{
 			"one": []string{"1"},
@@ -453,12 +453,12 @@ func TestRequestPOSTJson(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url:    "https://httpbin.org/post",
+		URL:    "https://httpbin.org/post",
 		Method: "POST",
 		Query: &Data{
 			"one": []string{"1"},
 		},
-		Json: map[string]interface{}{
+		JSON: map[string]interface{}{
 			"int":    1,
 			"string": "two",
 			"array":  []string{"3", "ba", "trois"},
@@ -523,7 +523,7 @@ func TestRequestPOSTForm(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url:    "https://httpbin.org/post",
+		URL:    "https://httpbin.org/post",
 		Method: "post",
 		Query: &Data{
 			"one": []string{"1"},
@@ -589,7 +589,7 @@ func TestRequestFail(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url: "http://1.com",
+		URL: "http://1.com",
 	})
 	if err == nil {
 		t.Error()
@@ -605,7 +605,7 @@ func TestRequestStream(t *testing.T) {
 	client := New()
 
 	res, err := client.Request(&Option{
-		Url: fmt.Sprintf("https://httpbin.org/stream/%v", streamLength),
+		URL: fmt.Sprintf("https://httpbin.org/stream/%v", streamLength),
 	})
 	if err != nil {
 		t.Error()
