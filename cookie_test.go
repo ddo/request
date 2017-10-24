@@ -10,27 +10,30 @@ var testCookieClient *Client
 func TestCookieInit(t *testing.T) {
 	testCookieClient = New()
 
-	res, err := testCookieClient.Request(&Option{
+	data, res, err := testCookieClient.Request(&Option{
 		URL: "http://httpbin.org/cookies/set?cookie1=one&cookie2=2",
 	})
 	if err != nil {
 		t.Error()
 		return
 	}
-
 	if res == nil {
 		t.Error()
 		return
 	}
-
-	data := decodeHttpbinRes(res)
-
-	if data.Cookies["cookie1"] != "one" {
+	if data == nil {
 		t.Error()
 		return
 	}
 
-	if data.Cookies["cookie2"] != "2" {
+	testData := decodeHttpbinRes(data)
+
+	if testData.Cookies["cookie1"] != "one" {
+		t.Error()
+		return
+	}
+
+	if testData.Cookies["cookie2"] != "2" {
 		t.Error()
 		return
 	}
@@ -97,22 +100,25 @@ func TestSetCookies(t *testing.T) {
 
 	testCookieClient.SetCookies("https://httpbin.org", cookies)
 
-	res, err := testCookieClient.Request(&Option{
+	data, res, err := testCookieClient.Request(&Option{
 		URL: "http://httpbin.org/cookies",
 	})
 	if err != nil {
 		t.Error()
 		return
 	}
-
 	if res == nil {
 		t.Error()
 		return
 	}
+	if data == nil {
+		t.Error()
+		return
+	}
 
-	data := decodeHttpbinRes(res)
+	testData := decodeHttpbinRes(data)
 
-	if data.Cookies["cookie3"] != "ba" {
+	if testData.Cookies["cookie3"] != "ba" {
 		t.Error()
 		return
 	}
@@ -130,22 +136,25 @@ func TestSetCookiesModify(t *testing.T) {
 
 	testCookieClient.SetCookies("http://httpbin.org", cookies)
 
-	res, err := testCookieClient.Request(&Option{
+	data, res, err := testCookieClient.Request(&Option{
 		URL: "https://httpbin.org/cookies",
 	})
 	if err != nil {
 		t.Error()
 		return
 	}
-
 	if res == nil {
 		t.Error()
 		return
 	}
+	if data == nil {
+		t.Error()
+		return
+	}
 
-	data := decodeHttpbinRes(res)
+	testData := decodeHttpbinRes(data)
 
-	if data.Cookies["cookie2"] != "hai" {
+	if testData.Cookies["cookie2"] != "hai" {
 		t.Error()
 		return
 	}
@@ -191,7 +200,7 @@ func TestImportCookie(t *testing.T) {
 	}
 
 	// verify
-	res, err := client.Request(&Option{
+	data, res, err := client.Request(&Option{
 		URL: "https://httpbin.org/cookies",
 	})
 	if err != nil {
@@ -202,15 +211,19 @@ func TestImportCookie(t *testing.T) {
 		t.Error()
 		return
 	}
-
-	data := decodeHttpbinRes(res)
-
-	if data.Cookies["cookie1"] != "1" {
+	if data == nil {
 		t.Error()
 		return
 	}
 
-	if data.Cookies["cookie2"] != "2" {
+	testData := decodeHttpbinRes(data)
+
+	if testData.Cookies["cookie1"] != "1" {
+		t.Error()
+		return
+	}
+
+	if testData.Cookies["cookie2"] != "2" {
 		t.Error()
 		return
 	}
@@ -220,14 +233,13 @@ func TestExportCookie(t *testing.T) {
 	// create client with cookies
 	client := New()
 
-	res, err := client.Request(&Option{
+	_, _, err := client.Request(&Option{
 		URL: "http://httpbin.org/cookies/set?cookie1=1&cookie2=2",
 	})
 	if err != nil {
 		t.Error()
 		return
 	}
-	defer res.Body.Close()
 	// create client with cookies - end
 
 	jsonStr, err := client.ExportCookie("http://httpbin.org")

@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -74,7 +75,7 @@ func (c *Client) SetTimeout(timeout time.Duration) {
 }
 
 // Request sends http request
-func (c *Client) Request(opt *Option) (res *http.Response, err error) {
+func (c *Client) Request(opt *Option) (data []byte, res *http.Response, err error) {
 	//set GET as default method
 	if opt.Method == "" {
 		opt.Method = "GET"
@@ -111,8 +112,18 @@ func (c *Client) Request(opt *Option) (res *http.Response, err error) {
 		debug("ERR", "\t<", err, humanizeNano(time.Now().Sub(now)))
 		return
 	}
+	defer res.Body.Close()
 
 	debug(res.StatusCode, "\t<", res.Request.URL, humanizeNano(time.Now().Sub(now)))
+
+	// read all
+	// it's a good practice to read all data so golang http can reuse requests
+	data, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		debug("ERR(ReadAll)", err)
+		return
+	}
+
 	return
 }
 
